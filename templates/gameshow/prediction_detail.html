@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block "extra_title" %}{{ prediction.event.name }} on {{ prediction.event.date }} | {% endblock %}
+
+{% block "content" %}
+    <h1>{{ prediction.event.name }} on {{ prediction.event.date }}</h1>
+    {% include "messages.html" %}
+    <p><a href="{% url gameshow.views.prediction_list %}">All predictions</a></p>
+    {% include "gameshow/prediction_form.html" %}
+{% endblock %}

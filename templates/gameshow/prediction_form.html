@@ -1,0 +1,17 @@
+{% if prediction.is_editable %}
+    <form action="{% url gameshow.views.prediction_detail pk=prediction.pk %}" method="post">
+        {% csrf_token %}
+        <ul>
+            <li>{{ prediction.description }}</li>
+            {{ form.as_ul  }}
+            <li><input type="submit" value="Save" /></li>
+        </ul>
+    </form>
+{% else %}
+    <ul>
+        <li>{{ prediction.description }}: {{ prediction.contestant }}</li>
+        {% if prediction.event.is_complete %}
+            <li>Winner: {{ prediction.event.winner }}</li>
+        {% endif %}
+    </ul>
+{% endif %}
