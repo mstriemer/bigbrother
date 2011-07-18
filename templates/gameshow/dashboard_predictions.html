@@ -1,0 +1,64 @@
+<div id="dashboard-predictions">
+    <div class="dashboard-title">Predictions</div>
+    {% for prediction_opts in predictions %}
+    {% with prediction=prediction_opts.0 %}
+    {% with user_prediction=prediction_opts.1 %}
+    <div class="dashboard-prediction">
+        <div class="dashboard-prediction-title">
+            <span class="left">{{ prediction.event.name }}</span>
+            <span class="right">{{ prediction.event.date }}</span>
+        </div>
+        <div class="clear"></div>
+        {% if user_prediction.is_editable %}
+        <form action="{% url gameshow.views.prediction_detail pk=user_prediction.pk %}" method="post">
+            {% csrf_token %}
+            {% with formset=user_prediction.as_form %}
+            {{ formset.management_form }}
+            {% for form in formset %}
+            {% for field in form.hidden_fields %}
+            {{ field }}
+            {% endfor %}
+            {% for field in form.visible_fields %}
+            <div class="dashboard-prediction-contestant">
+                <span class="dashboard-prediction-contestant-contestant">{{ field }}</span>
+                <span class="dashboard-prediction-contestant-description">{{ prediction.description }}:</span>
+            </div>
+            <div class="clear"></div>
+            {% endfor %}
+            {% endfor %}
+            {% endwith %}
+            <div class="dashboard-prediction-contestant">
+                <span class="dashboard-prediction-contestant-contestant"><input type="submit" value="Save" /></span>
+            </div>
+            <div class="clear"></div>
+        </form>
+        {% else %}
+        {% for choice in user_prediction.event_contestants.all %}
+        <div class="dashboard-prediction-contestant">
+            <span class="dashboard-prediction-contestant-contestant">{{ choice }}</span>
+            <span class="dashboard-prediction-contestant-description">{{ prediction.description }}:</span>
+        </div>
+        <div class="clear"></div>
+        {% empty %}
+        <div class="dashboard-prediction-contestant">
+            <span class="dashboard-prediction-contestant-contestant">No prediction</span>
+            <span class="dashboard-prediction-contestant-description">{{ prediction.description }}:</span>
+        </div>
+        <div class="clear"></div>
+        {% endfor %}
+        {% endif %}
+        {% for match in prediction.matches.all %}
+        <div class="dashboard-prediction-contestant">
+            <span class="dashboard-prediction-contestant-contestant">{{ match.contestant }}</span>
+            <span class="dashboard-prediction-contestant-description">Outcome ({% if match in user_prediction.event_contestants.all %}{{ prediction.points }}{% else %}0{% endif %} points):</span>
+        </div>
+        <div class="clear"></div>
+        {% endfor %}
+    </div>
+    {% if not forloop.last %}
+    <div class="dashboard-prediction-seperator"></div>
+    {% endif %}
+    {% endwith %}
+    {% endwith %}
+    {% endfor %}
+</div>

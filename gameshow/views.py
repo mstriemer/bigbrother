@@ -1,41 +1,70 @@
+from datetime import datetime
+
 from django.views.generic import ListView, DetailView
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
+from gameshow.models import Gameshow, Contestant, Event, UserPrediction, \
+                            UserPredictionChoice, Prediction, Team
+from gameshow.forms import UserPredictionFormSet, UserPredictionChoiceForm, \
+                            TeamFormSet
 
-from gameshow.models import Gameshow, Contestant, Event, Prediction
-from gameshow.forms import PredictionForm
-
-gameshow_list = ListView.as_view(model=Gameshow,
-    context_object_name='gameshow_list')
-
-gameshow_detail = DetailView.as_view(model=Gameshow,
-    context_object_name='gameshow')
-
-contestant_detail = DetailView.as_view(model=Contestant,
-    context_object_name='contestant')
-
-event_detail = DetailView.as_view(model=Event, context_object_name='event')
-
-prediction_list = ListView.as_view(model=Prediction,
-    context_object_name='prediction_list')
-
-def prediction_list(request):
-    predictions = Prediction.objects.all()[:10]
-    pfs = [(p, PredictionForm(instance=p)) for p in predictions]
-    return render_to_response('gameshow/prediction_list.html',
-        {'prediction_list': pfs}, context_instance=RequestContext(request))
+@login_required
+def dashboard(request):
+    gameshow = Gameshow.objects.get(pk=1)
+    try:
+        team = Team.objects.get(user=request.user)
+    except Team.DoesNotExist:
+        team = Team.objects.create(user=request.user)
+    team_form_set = TeamFormSet(instance=team) if team.is_editable else None
+    user_points = gameshow.calculate_points().items()
+    user_points.sort(key=lambda up: up[1], reverse=True)
+    predictions = []
+    for prediction in Prediction.objects.all().order_by('-event__date'):
+        try:
+            predictions.append((prediction,
+                prediction.userprediction_set.get(user=request.user)))
+        except UserPrediction.DoesNotExist:
+            predictions.append((prediction,
+                UserPrediction.objects.create(
+                user=request.user, prediction=prediction)))
+    return render_to_response('gameshow/dashboard.html',
+        {'gameshow': gameshow, 'user_points': user_points,
+        'predictions': predictions, 'team': team,
+        'team_form_set': team_form_set},
+        context_instance=RequestContext(request))
 
 def prediction_detail(request, pk):
-    prediction = Prediction.objects.get(pk=pk)
-    if request.method == 'POST':
-        form = PredictionForm(request.POST, instance=prediction)
-        if form.is_valid() and form.save():
-            messages.success(request, 'Prediction successfully updated.')
-            return redirect('gameshow.views.prediction_list')
-    else:
-        form = PredictionForm(instance=prediction)
+    prediction = UserPrediction.objects.get(pk=pk, user=request.user)
+    if prediction.prediction.event.date > datetime.now():
+        form = prediction.as_form(request.POST or None)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '{0} prediction successfully'
+                ' updated'.format(prediction.prediction.event.name))
+            return redirect('/bigbrother/')
+        else:
+            return render_to_response('gameshow/prediction_edit.html',
+                {'form': form, 'prediction': prediction},
+                context_instance=RequestContext(request))
     return render_to_response('gameshow/prediction_detail.html',
-        {'prediction': prediction, 'form': form},
-        context_instance=RequestContext(request))
+        {'prediction': prediction}, context_instance=RequestContext(request))
+
+@login_required
+def team_detail(request):
+    try:
+        team = Team.objects.get(user=request.user)
+    except Team.DoesNotExist:
+        team = Team.objects.create(user=request.user)
+    if team.is_editable:
+        form_set = TeamFormSet(request.POST or None, instance=team)
+        if form_set.is_valid():
+            form_set.save()
+            messages.success(request, 'Your team was successfully updated')
+            return redirect('/bigbrother/')
+    else:
+        form_set = None
+    return render_to_response('gameshow/team_detail.html', {'team': team,
+        'form_set': form_set}, context_instance=RequestContext(request))

@@ -1,0 +1,20 @@
+<div id="dashboard-team">
+    <div class="dashboard-title">Team</div>
+    {% if team.is_editable and team_form_set %}
+    <form action="{% url gameshow.views.team_detail %}" method="post">
+        {% csrf_token %}
+        <ul class="object-list">
+            {{ team_form_set.as_ul }}
+            <li><input type="submit" value="Save" /></li>
+        </ul>
+    </form>
+    {% else %}
+    <ul class="object-list">
+        {% for member in team.contestants.all %}
+        <li>{{ member }}</li>
+        {% empty %}
+        <li>There is no one on your team.</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>

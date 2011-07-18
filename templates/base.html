@@ -2,8 +2,23 @@
 <html>
 <head>
     <title>{% block "extra_title" %}{% endblock %}BigBrother</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/base.css" />
+    {% block "head" %}{% endblock %}
 </head>
 <body>
-    {% block "content" %}{% endblock %}
+    <div id="content">
+        {% include "messages.html" %}
+        <p>
+        {% if user.is_authenticated %}
+        Welcome {{ user }}. Not you?
+            <a href="{% url django.contrib.auth.views.logout_then_login %}">
+            Logout</a> |
+            <a href="{% url django.contrib.auth.views.password_change %}">
+            Change password</a> |
+        {% endif %}
+        <a href="/bigbrother/rules/">Rules</a>
+        </p>
+        {% block "content" %}{% endblock %}
+    </div>
 </body>
 </html>

@@ -1,0 +1,55 @@
+#dashboard-points, #dashboard-team {
+    width: 200px;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px 10px;
+    margin: 10px 10px 10px 0;
+}
+
+.dashboard-section {
+    float: left;
+}
+
+#dashboard-points table {
+    width: 100%;
+}
+
+#dashboard-predictions {
+    width: 521px;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px 10px;
+    margin: 10px 0 10px 0;
+}
+
+.dashboard-title {
+    font-size: 26px;
+    border-bottom: 1px solid black;
+    padding: 5px 0;
+}
+
+.dashboard-prediction {
+    padding: 10px 0;
+}
+
+.dashboard-prediction-seperator {
+    border-bottom: 1px solid #000000;
+    margin: 2px 0;
+}
+
+.dashboard-prediction-title {
+    font-weight: bold;
+}
+
+.dashboard-prediction-contestant-description {
+    text-align: right;
+    float: right;
+    margin: 0 5px;
+}
+
+.dashboard-prediction-contestant-contestant {
+    text-align: left;
+    float: right;
+    margin: 0 5px;
+    width: 100px;
+}

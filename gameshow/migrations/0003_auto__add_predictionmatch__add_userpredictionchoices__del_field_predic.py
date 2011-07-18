@@ -8,80 +8,58 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Adding model 'Gameshow'
-        db.create_table('gameshow_gameshow', (
+        # Adding model 'PredictionMatch'
+        db.create_table('gameshow_predictionmatch', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-        ))
-        db.send_create_signal('gameshow', ['Gameshow'])
-
-        # Adding model 'Contestant'
-        db.create_table('gameshow_contestant', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('gameshow', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['gameshow.Gameshow'])),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('state', self.gf('django.db.models.fields.CharField')(max_length=15)),
-        ))
-        db.send_create_signal('gameshow', ['Contestant'])
-
-        # Adding model 'Event'
-        db.create_table('gameshow_event', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('gameshow', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['gameshow.Gameshow'])),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('date_performed', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-        ))
-        db.send_create_signal('gameshow', ['Event'])
-
-        # Adding model 'EventContestant'
-        db.create_table('gameshow_eventcontestant', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('event', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['gameshow.Event'])),
-            ('contestant', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['gameshow.Contestant'])),
-            ('result', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('gameshow', ['EventContestant'])
-
-        # Adding model 'EventPrediction'
-        db.create_table('gameshow_eventprediction', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('event', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['gameshow.Event'])),
-            ('result', self.gf('django.db.models.fields.IntegerField')()),
-            ('points', self.gf('django.db.models.fields.IntegerField')()),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=100)),
-        ))
-        db.send_create_signal('gameshow', ['EventPrediction'])
-
-        # Adding model 'Prediction'
-        db.create_table('gameshow_prediction', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('event_prediction', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['gameshow.EventPrediction'])),
             ('event_contestant', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['gameshow.EventContestant'])),
         ))
-        db.send_create_signal('gameshow', ['Prediction'])
+        db.send_create_signal('gameshow', ['PredictionMatch'])
+
+        # Adding model 'UserPredictionChoices'
+        db.create_table('gameshow_userpredictionchoices', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('user_prediction', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['gameshow.UserPrediction'])),
+            ('event_contestant', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['gameshow.EventContestant'])),
+        ))
+        db.send_create_signal('gameshow', ['UserPredictionChoices'])
+
+        # Deleting field 'Prediction.result'
+        db.delete_column('gameshow_prediction', 'result')
+
+        # Adding field 'Prediction.number_of_choices'
+        db.add_column('gameshow_prediction', 'number_of_choices', self.gf('django.db.models.fields.IntegerField')(default=1), keep_default=False)
+
+        # Adding M2M table for field matches on 'Prediction'
+        db.create_table('gameshow_prediction_matches', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('prediction', models.ForeignKey(orm['gameshow.prediction'], null=False)),
+            ('predictionmatch', models.ForeignKey(orm['gameshow.predictionmatch'], null=False))
+        ))
+        db.create_unique('gameshow_prediction_matches', ['prediction_id', 'predictionmatch_id'])
+
+        # Deleting field 'UserPrediction.event_contestant'
+        db.delete_column('gameshow_userprediction', 'event_contestant_id')
 
 
     def backwards(self, orm):
         
-        # Deleting model 'Gameshow'
-        db.delete_table('gameshow_gameshow')
+        # Deleting model 'PredictionMatch'
+        db.delete_table('gameshow_predictionmatch')
 
-        # Deleting model 'Contestant'
-        db.delete_table('gameshow_contestant')
+        # Deleting model 'UserPredictionChoices'
+        db.delete_table('gameshow_userpredictionchoices')
 
-        # Deleting model 'Event'
-        db.delete_table('gameshow_event')
+        # Adding field 'Prediction.result'
+        db.add_column('gameshow_prediction', 'result', self.gf('django.db.models.fields.IntegerField')(default=1), keep_default=False)
 
-        # Deleting model 'EventContestant'
-        db.delete_table('gameshow_eventcontestant')
+        # Deleting field 'Prediction.number_of_choices'
+        db.delete_column('gameshow_prediction', 'number_of_choices')
 
-        # Deleting model 'EventPrediction'
-        db.delete_table('gameshow_eventprediction')
+        # Removing M2M table for field matches on 'Prediction'
+        db.delete_table('gameshow_prediction_matches')
 
-        # Deleting model 'Prediction'
-        db.delete_table('gameshow_prediction')
+        # Adding field 'UserPrediction.event_contestant'
+        db.add_column('gameshow_userprediction', 'event_contestant', self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['gameshow.EventContestant']), keep_default=False)
 
 
     models = {
@@ -144,14 +122,6 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'result': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'})
         },
-        'gameshow.eventprediction': {
-            'Meta': {'object_name': 'EventPrediction'},
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'event': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['gameshow.Event']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'points': ('django.db.models.fields.IntegerField', [], {}),
-            'result': ('django.db.models.fields.IntegerField', [], {})
-        },
         'gameshow.gameshow': {
             'Meta': {'object_name': 'Gameshow'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -159,10 +129,29 @@ class Migration(SchemaMigration):
         },
         'gameshow.prediction': {
             'Meta': {'object_name': 'Prediction'},
-            'event_contestant': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['gameshow.EventContestant']"}),
-            'event_prediction': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['gameshow.EventPrediction']"}),
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'event': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['gameshow.Event']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'matches': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['gameshow.PredictionMatch']", 'symmetrical': 'False'}),
+            'number_of_choices': ('django.db.models.fields.IntegerField', [], {}),
+            'points': ('django.db.models.fields.IntegerField', [], {})
+        },
+        'gameshow.predictionmatch': {
+            'Meta': {'object_name': 'PredictionMatch'},
+            'event_contestant': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['gameshow.EventContestant']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+        },
+        'gameshow.userprediction': {
+            'Meta': {'object_name': 'UserPrediction'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'prediction': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['gameshow.Prediction']"}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
+        },
+        'gameshow.userpredictionchoices': {
+            'Meta': {'object_name': 'UserPredictionChoices'},
+            'event_contestant': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['gameshow.EventContestant']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'user_prediction': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['gameshow.UserPrediction']"})
         }
     }
 

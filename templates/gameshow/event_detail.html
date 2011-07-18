@@ -3,7 +3,7 @@
 {% block "extra_title" %}{{ event }} | {% endblock %}
 
 {% block "content" %}
-    <h1>{{ event }}</h1>
+    <h1>{{ event.date }} - {{ event.name }}</h1>
     <p>From the gameshow <a href="{% url gameshow.views.gameshow_detail pk=event.gameshow.pk %}">{{ event.gameshow }}</a></p>
     <h2>Contestants</h2>
     <ul>
@@ -11,4 +11,13 @@
             <li><a href="{% url gameshow.views.contestant_detail pk=contestant.pk %}">{{ contestant }}</a></li>
         {% endfor %}
     </ul>
+    <h2>Predictions</h2>
+    {% for event_prediction in event.event_predictions.all %}
+        <h3>{{ event_prediction.description }}</h3>
+        <ul>
+            {% for user_prediction in event_prediction.user_predictions.all %}
+                <li>{{ user_prediction.user }} - {{ user_prediction.contestant }}</li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
 {% endblock %}

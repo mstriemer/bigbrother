@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block "head" %}<link rel="stylesheet" type="text/css" href="/static/css/dashboard.css" />{% endblock %}
+
+{% block "content" %}
+<h1>{{ gameshow }}</h1>
+
+<div class="dashboard-section">
+    {% include "gameshow/dashboard_points.html" %}
+    {% include "gameshow/dashboard_team.html" %}
+</div>
+
+<div class="dashboard-section">
+    {% include "gameshow/dashboard_predictions.html" %}
+</div>
+
+<div class="clear"></div>
+{% endblock %}

@@ -6,16 +6,5 @@
     <h1>{{ prediction.prediction.event.name }} on {{ prediction.prediction.event.date }}</h1>
     {% include "messages.html" %}
     <p><a href="{% url gameshow.views.dashboard %}">Dashboard</a></p>
-    <p>Choices:</p>
-    <ul>
-        {% for event_contestant in prediction.event_contestants.all %}
-        <li>{{ event_contestant.contestant }}</li>
-        {% endfor %}
-    </ul>
-    <p>Matches:</p>
-    <ul>
-        {% for match in prediction.prediction.matches.all %}
-        <li>{{ match.contestant }}</li>
-        {% endfor %}
-    </ul>
+    {% include "gameshow/prediction_form.html" %}
 {% endblock %}

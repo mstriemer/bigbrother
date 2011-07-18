@@ -1,3 +1,82 @@
+body {
+    font-family: verdana, tahoma, sans-serif;
+    background: #e8e8ff;
+    margin: 0;
+    padding: 0;
+}
+
+#content {
+    width: 775px;
+    margin: 0 auto;
+    padding: 10px;
+    background: #e8e8ff;
+}
+
+ul#login-form, ul.object-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+div.object-detail {
+    width: 100%;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+ul#login-form li {
+
+}
+
 .required {
     background-color: #ccc;
+}
+
+ul#messages {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+ul#messages li {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+ul#messages li.success {
+    background: #99ff33;
+    border: 2px solid #66cc00;
+}
+
+ul#messages li.error {
+    background: #eb0000;
+    border: 2px solid #be0000;
+    color: #ffffff;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.clear {
+    clear: both;
+}
+
+.left-align {
+    text-align: left;
+}
+
+.right-align {
+    text-align: right;
+}
+
+tr.odd {
+    background: blue;
 }

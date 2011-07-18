@@ -1,0 +1,17 @@
+<div id="dashboard-points">
+    <div class="dashboard-title">Points</div>
+    <table>
+        <!--
+        <tr>
+            <th>Player</th>
+            <th>Points</th>
+        </tr>
+        -->
+        {% for user, points in user_points %}
+        <tr>
+            <td>{{ user }}</td>
+            <td class="right-align">{{ points }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
