@@ -28,6 +28,8 @@ def hack_local_files(target, folder):
 def update_symlinks(target, folder):
     current = target + folder
     previous = target + 'current'
+    sudo("ln -s /lib/django-trunk/django/contrib/admin/static/admin "
+        "{0}/bigbrother/media/admin".format(current))
     sudo("rm {0}".format(previous))
     sudo("ln -s {0} {1}".format(current, previous))
 

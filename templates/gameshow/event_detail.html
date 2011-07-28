@@ -3,7 +3,7 @@
 {% block "extra_title" %}{{ event }} | {% endblock %}
 
 {% block "content" %}
-    <h1>{{ event.date }} - {{ event.name }}</h1>
+    <h2>{{ event.date }} - {{ event.name }}</h2>
     <p>From the gameshow <a href="{% url gameshow.views.gameshow_detail pk=event.gameshow.pk %}">{{ event.gameshow }}</a></p>
     <h2>Contestants</h2>
     <ul>

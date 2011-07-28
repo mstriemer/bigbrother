@@ -2,7 +2,7 @@
 
 {% block "content" %}
 <div class="object-detail">
-    <h1>Login</h1>
+    <h2>Login</h2>
     <form action="{% url django.contrib.auth.views.login %}" method="post">
         {% csrf_token %}
         <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{% url gameshow.views.dashboard %}{% endif %}" />

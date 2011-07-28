@@ -100,6 +100,13 @@ class Prediction(models.Model):
             # Return an empty QuerySet
             return Team.objects.none()
 
+    @property
+    def contestants(self):
+        return [m.contestant for m in self.matches.all()]
+
+    @property
+    def team_match_points(self):
+        return self.points / 2
 
 class PredictionMatch(models.Model):
     prediction = models.ForeignKey(Prediction)

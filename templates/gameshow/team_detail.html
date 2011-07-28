@@ -3,7 +3,7 @@
 {% block "content" %}
 <p><a href="{% url gameshow.views.dashboard %}">Back</a></p>
 <div class="object-detail">
-    <h1>Team</h1>
+    <h2>Team</h2>
     {% if form_set %}
     <form action="{% url gameshow.views.team_detail %}" method="post">
         {% csrf_token %}

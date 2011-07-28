@@ -3,7 +3,7 @@
 {% block "extra_title" %}Gameshow List | {% endblock %}
 
 {% block "content" %}
-    <h1>Gameshow List</h1>
+    <h2>Gameshow List</h2>
     <ul>
         {% for gameshow in gameshow_list %}
             <li><a href="{% url gameshow.views.gameshow_detail pk=gameshow.pk %}">{{ gameshow }}</a></li>
