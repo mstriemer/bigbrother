@@ -25,6 +25,18 @@ class PredictionMatchInline(admin.TabularInline):
     model = PredictionMatch
     extra = 0
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'event_contestant':
+            # FIXME: This is a horrible hack - Mk 28-07-2011
+            try:
+                pk = int(request.path.split('/')[-2])
+                kwargs['queryset'] = Prediction.objects.get(
+                        pk=pk).event.eventcontestant_set.order_by('contestant__name')
+            except ValueError:
+                pass
+        return super(PredictionMatchInline, self).formfield_for_foreignkey(
+                db_field, request, **kwargs)
+
 
 class UserPredictionInline(admin.TabularInline):
     model = UserPrediction
@@ -34,6 +46,19 @@ class UserPredictionInline(admin.TabularInline):
 class UserPredictionChoiceInline(admin.TabularInline):
     model = UserPredictionChoice
     extra = 0
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'event_contestant':
+            # FIXME: This is a horrible hack - Mk 28-07-2011
+            try:
+                pk = int(request.path.split('/')[-2])
+                kwargs['queryset'] = UserPrediction.objects.get(
+                        pk=pk).prediction.event.eventcontestant_set.order_by(
+                        'contestant__name')
+            except ValueError:
+                pass
+        return super(UserPredictionChoiceInline, self).formfield_for_foreignkey(
+                db_field, request, **kwargs)
 
 
 class TeamMembershipInline(admin.TabularInline):
@@ -78,6 +103,7 @@ class PredictionAdmin(admin.ModelAdmin):
         'can_match_team')
     inlines = (PredictionMatchInline, UserPredictionInline,)
     list_editable = ('can_match_team',)
+
 
 admin.site.register(Gameshow, GameshowAdmin)
 admin.site.register(Contestant, ContestantAdmin)
