@@ -40,6 +40,10 @@ class Contestant(models.Model):
     def __unicode__(self):
         return self.name
 
+    @property
+    def is_active(self):
+        return self.state == 'active'
+
 
 class Event(models.Model):
     """

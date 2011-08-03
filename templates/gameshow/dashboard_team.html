@@ -11,7 +11,9 @@
     {% else %}
     <ul class="object-list">
         {% for member in team.contestants.all %}
-        <li>{{ member }}</li>
+        <li{% if not member.is_active %} class="inactive"{% endif %}>
+          {{ member }}
+        </li>
         {% empty %}
         <li>There is no one on your team.</li>
         {% endfor %}
