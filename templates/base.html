@@ -7,16 +7,16 @@
 </head>
 <body>
     <div id="content">
-        <p>
         {% if user.is_authenticated %}
-        Welcome {{ user }}. Not you?
-        <a href="{% url django.contrib.auth.views.logout_then_login %}">
-        Logout</a> |
-        <a href="{% url django.contrib.auth.views.password_change %}">
-        Change password</a> |
-        <a href="/bigbrother/rules/">Rules</a>
-        {% endif %}
+        <p class="header">
+            Welcome {{ user }}. Not you?
+            <a href="{% url django.contrib.auth.views.logout_then_login %}">
+            Logout</a> |
+            <a href="{% url django.contrib.auth.views.password_change %}">
+            Change password</a> |
+            <a href="/bigbrother/rules/">Rules</a>
         </p>
+        {% endif %}
         <h1>Big Brother Season 13</h1>
         {% include "messages.html" %}
         {% block "content" %}{% endblock %}
