@@ -84,6 +84,7 @@ class ContestantAdmin(admin.ModelAdmin):
 
 class EventAdmin(admin.ModelAdmin):
     list_display = ('name', 'date')
+    ordering = ('-date',)
     inlines = (EventContestantInline, PredictionInline)
 
 
@@ -94,6 +95,8 @@ class EventContestantAdmin(admin.ModelAdmin):
 
 class UserPredictionAdmin(admin.ModelAdmin):
     list_display = ('prediction', 'user')
+    list_filter = ('prediction__event',)
+    ordering = ('-prediction__event__date',)
     fields = ('prediction', 'user')
     inlines = (UserPredictionChoiceInline,)
 
@@ -101,6 +104,7 @@ class UserPredictionAdmin(admin.ModelAdmin):
 class PredictionAdmin(admin.ModelAdmin):
     list_display = ('event', 'description', 'number_of_choices',
         'can_match_team')
+    ordering = ('-event__date',)
     inlines = (PredictionMatchInline, UserPredictionInline,)
     list_editable = ('can_match_team',)
 
