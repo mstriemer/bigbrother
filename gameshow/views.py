@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 from gameshow.models import Gameshow, Contestant, Event, UserPrediction, \
                             UserPredictionChoice, Prediction, Team
@@ -68,3 +69,11 @@ def team_detail(request):
         form_set = None
     return render_to_response('gameshow/team_detail.html', {'team': team,
         'form_set': form_set}, context_instance=RequestContext(request))
+
+@login_required
+def points_detail(request):
+    predictions = Prediction.objects.order_by('-event__date_performed').select_related()
+    users = User.objects.all()
+    return render_to_response('gameshow/points_detail.html',
+            {'predictions': predictions, 'users': users},
+            context_instance=RequestContext(request))

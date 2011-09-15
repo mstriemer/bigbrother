@@ -57,3 +57,16 @@
     margin: 0 5px;
     width: 100px;
 }
+
+.points-table {
+    border-collapse: collapse;
+}
+
+.points-table, .points-table td, .points-table th {
+    border: 1px solid #000;
+    padding: 3px;
+}
+
+.points-table th {
+    background-color: #ccc;
+}

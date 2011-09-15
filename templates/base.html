@@ -14,7 +14,8 @@
             Logout</a> |
             <a href="{% url django.contrib.auth.views.password_change %}">
             Change password</a> |
-            <a href="/bigbrother/rules/">Rules</a>
+            <a href="/bigbrother/rules/">Rules</a> |
+            <a href="{% url gameshow.views.points_detail %}">Points</a>
         </p>
         {% endif %}
         <h1>Big Brother Season 13</h1>

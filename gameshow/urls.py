@@ -7,4 +7,5 @@ urlpatterns = patterns('',
     (r'^team/$', 'gameshow.views.team_detail'),
     (r'^rules/$', direct_to_template, {'template':
     'gameshow/bigbrother_rules.html'}),
+    (r'^points/$', 'gameshow.views.points_detail'),
 )

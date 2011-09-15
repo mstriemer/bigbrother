@@ -53,7 +53,7 @@ MEDIA_ROOT = '/Users/Mark/git/bigbrother/media/'
 MEDIA_URL = '/static/'
 
 STATIC_ROOT = ''
-STATIC_URL = None
+STATIC_URL = '/media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'k(-e!u$e6&=&k&%if42kvrboj-u6kze-^x=q+*)3zozl9yv^4v'
