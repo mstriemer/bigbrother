@@ -72,13 +72,13 @@ def team_detail(request):
 
 @login_required
 def points_detail(request):
-    predictions = Prediction.objects.order_by('event__date_performed').select_related()
+    predictions = Prediction.objects.order_by('event__date_performed')
     users = User.objects.all()
     everything = []
-    user_points = dict([(u, 0) for u in users])
+    user_points = dict((u, 0) for u in users)
     for prediction in predictions:
-        prediction_user_points = {u: {'prediction_points': 0, 'team_points': 0}
-                for u in users}
+        prediction_user_points = dict((u, {'prediction_points': 0,
+                'team_points': 0}) for u in users)
         for pmatch in prediction.matching_user_predictions.all():
             prediction_user_points[pmatch.user]['prediction_points'] += \
                     prediction.points
