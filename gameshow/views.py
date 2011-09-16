@@ -72,36 +72,8 @@ def team_detail(request):
 
 @login_required
 def points_detail(request):
-    predictions = Prediction.objects.order_by('event__date_performed').select_related()
+    predictions = Prediction.objects.order_by('-event__date_performed').select_related()
     users = User.objects.all()
-    everything = []
-    user_points = dict([(u, 0) for u in users])
-    for prediction in predictions:
-        prediction_user_points = {u: {'prediction_points': 0, 'team_points': 0}
-                for u in users}
-        for pmatch in prediction.matching_user_predictions.all():
-            prediction_user_points[pmatch.user]['prediction_points'] += \
-                    prediction.points
-        for tmatch in prediction.matching_teams.all():
-            prediction_user_points[tmatch.user]['team_points'] += \
-                    prediction.points / 2
-        prediction_row = {
-            'prediction': {
-                'event_name': prediction.event.name,
-                'event_date': prediction.event.date
-            },
-            'users': {}
-        }
-        for user, points in prediction_user_points.items():
-            event_points = points['prediction_points'] + \
-                    points['team_points']
-            points.update({'event_points': event_points,
-                'old_total_points': user_points[user]})
-            user_points[user] += event_points
-            points.update({'new_total_points': user_points[user]})
-            prediction_row['users'][user] = points
-        everything.append(prediction_row)
-    everything.reverse()
     return render_to_response('gameshow/points_detail.html',
-            {'everything': everything},
+            {'predictions': predictions, 'users': users},
             context_instance=RequestContext(request))
