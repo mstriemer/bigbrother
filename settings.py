@@ -45,7 +45,7 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = '/Users/Mark/git/bigbrother/media/'
+MEDIA_ROOT = '/Users/Mark/Projects/bigbrother/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -76,7 +76,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'bigbrother.urls'
 
 TEMPLATE_DIRS = (
-    '/Users/Mark/git/bigbrother/templates'
+    '/Users/Mark/Projects/bigbrother/templates'
 )
 
 INSTALLED_APPS = (
