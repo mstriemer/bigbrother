@@ -1,16 +1,12 @@
 from datetime import datetime
 
-from django.views.generic import ListView, DetailView
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 
-from gameshow.models import Gameshow, Contestant, Event, UserPrediction, \
-                            UserPredictionChoice, Prediction, Team
-from gameshow.forms import UserPredictionFormSet, UserPredictionChoiceForm, \
-                            TeamFormSet
+from gameshow.models import Gameshow, UserPrediction, Team
+from gameshow.forms import TeamFormSet
 
 @login_required
 def dashboard(request):
@@ -21,13 +17,9 @@ def dashboard(request):
     user_points.sort(key=lambda up: up[1], reverse=True)
     predictions = []
     for prediction in gameshow.prediction_set.order_by('-event__date'):
-        try:
-            predictions.append((prediction,
-                prediction.userprediction_set.get(user=request.user)))
-        except UserPrediction.DoesNotExist:
-            predictions.append((prediction,
-                UserPrediction.objects.create(
-                user=request.user, prediction=prediction)))
+        user_prediction, created = prediction.userprediction_set.get_or_create(
+                user=request.user)
+        predictions.append((prediction, user_prediction))
     return render_to_response('gameshow/dashboard.html',
         {'gameshow': gameshow, 'user_points': user_points,
         'predictions': predictions, 'team': team,
@@ -69,8 +61,9 @@ def team_detail(request):
 
 @login_required
 def points_detail(request):
-    predictions = Prediction.objects.order_by('event__date_performed')
-    users = User.objects.all()
+    gameshow = Gameshow.objects.current()
+    predictions = gameshow.prediction_set.order_by('event__date_performed')
+    users = gameshow.users.all()
     everything = []
     user_points = dict((u, 0) for u in users)
     for prediction in predictions:
