@@ -14,16 +14,13 @@ from gameshow.forms import UserPredictionFormSet, UserPredictionChoiceForm, \
 
 @login_required
 def dashboard(request):
-    gameshow = Gameshow.objects.get(pk=1)
-    try:
-        team = Team.objects.get(user=request.user)
-    except Team.DoesNotExist:
-        team = Team.objects.create(user=request.user)
+    gameshow = Gameshow.objects.current()
+    team, created = gameshow.team_set.get_or_create(user=request.user)
     team_form_set = TeamFormSet(instance=team) if team.is_editable else None
     user_points = gameshow.calculate_points().items()
     user_points.sort(key=lambda up: up[1], reverse=True)
     predictions = []
-    for prediction in Prediction.objects.all().order_by('-event__date'):
+    for prediction in gameshow.prediction_set.order_by('-event__date'):
         try:
             predictions.append((prediction,
                 prediction.userprediction_set.get(user=request.user)))

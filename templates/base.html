@@ -18,7 +18,7 @@
             <a href="{% url gameshow.views.points_detail %}">Points</a>
         </p>
         {% endif %}
-        <h1>Big Brother Season 13</h1>
+        <h1>{{ gameshow }}</h1>
         {% include "messages.html" %}
         {% block "content" %}{% endblock %}
     </div>

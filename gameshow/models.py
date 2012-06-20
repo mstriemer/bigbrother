@@ -10,15 +10,27 @@ CONTESTANT_STATE_CHOICES = (
 )
 
 
+class GameshowManager(models.Manager):
+    def current(self):
+        return self.get_query_set().get(pk=2)
+
+
 class Gameshow(models.Model):
     """A gameshow."""
+    objects = GameshowManager()
+
     name = models.CharField(max_length=50)
+    users = models.ManyToManyField(User)
 
     def __unicode__(self):
         return self.name
 
+    @property
+    def prediction_set(self):
+        return Prediction.objects.filter(event__gameshow__pk=self.pk)
+
     def calculate_points(self):
-        user_points = dict([(u, 0) for u in User.objects.all()])
+        user_points = dict([(u, 0) for u in self.users.all()])
         for event in self.event_set.all():
             for prediction in event.prediction_set.all():
                 for match in prediction.matching_user_predictions.all():
@@ -166,10 +178,11 @@ class Team(models.Model):
     """
     user = models.ForeignKey(User)
     contestants = models.ManyToManyField(Contestant, through='TeamMembership')
+    gameshow = models.ForeignKey(Gameshow)
 
     @property
     def is_editable(self):
-        return datetime.now() < datetime(year=2011, month=7, day=20, hour=19,
+        return datetime.now() < datetime(year=2012, month=7, day=20, hour=19,
                 minute=0, second=0)
 
 
