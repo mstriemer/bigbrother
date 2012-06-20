@@ -5,7 +5,7 @@ from django.template import RequestContext
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from gameshow.models import Gameshow, UserPrediction, Team
+from gameshow.models import Gameshow, UserPrediction
 from gameshow.forms import TeamFormSet
 
 @login_required
@@ -26,6 +26,7 @@ def dashboard(request):
         'team_form_set': team_form_set},
         context_instance=RequestContext(request))
 
+@login_required
 def prediction_detail(request, pk):
     prediction = UserPrediction.objects.get(pk=pk, user=request.user)
     if prediction.prediction.event.date > datetime.now():
@@ -44,10 +45,8 @@ def prediction_detail(request, pk):
 
 @login_required
 def team_detail(request):
-    try:
-        team = Team.objects.get(user=request.user)
-    except Team.DoesNotExist:
-        team = Team.objects.create(user=request.user)
+    gameshow = Gameshow.objects.current()
+    team, created = gameshow.team_set.get_or_create(user=request.user)
     if team.is_editable:
         form_set = TeamFormSet(request.POST or None, instance=team)
         if form_set.is_valid():
