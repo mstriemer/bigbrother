@@ -1,42 +1,32 @@
 from datetime import datetime
 
-from django.views.generic import ListView, DetailView
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 
-from gameshow.models import Gameshow, Contestant, Event, UserPrediction, \
-                            UserPredictionChoice, Prediction, Team
-from gameshow.forms import UserPredictionFormSet, UserPredictionChoiceForm, \
-                            TeamFormSet
+from gameshow.models import Gameshow, UserPrediction
+from gameshow.forms import TeamFormSet
 
 @login_required
 def dashboard(request):
-    gameshow = Gameshow.objects.get(pk=1)
-    try:
-        team = Team.objects.get(user=request.user)
-    except Team.DoesNotExist:
-        team = Team.objects.create(user=request.user)
+    gameshow = Gameshow.objects.current()
+    team, created = gameshow.team_set.get_or_create(user=request.user)
     team_form_set = TeamFormSet(instance=team) if team.is_editable else None
     user_points = gameshow.calculate_points().items()
     user_points.sort(key=lambda up: up[1], reverse=True)
     predictions = []
-    for prediction in Prediction.objects.all().order_by('-event__date'):
-        try:
-            predictions.append((prediction,
-                prediction.userprediction_set.get(user=request.user)))
-        except UserPrediction.DoesNotExist:
-            predictions.append((prediction,
-                UserPrediction.objects.create(
-                user=request.user, prediction=prediction)))
+    for prediction in gameshow.prediction_set.order_by('-event__date'):
+        user_prediction, created = prediction.userprediction_set.get_or_create(
+                user=request.user)
+        predictions.append((prediction, user_prediction))
     return render_to_response('gameshow/dashboard.html',
         {'gameshow': gameshow, 'user_points': user_points,
         'predictions': predictions, 'team': team,
         'team_form_set': team_form_set},
         context_instance=RequestContext(request))
 
+@login_required
 def prediction_detail(request, pk):
     prediction = UserPrediction.objects.get(pk=pk, user=request.user)
     if prediction.prediction.event.date > datetime.now():
@@ -55,10 +45,8 @@ def prediction_detail(request, pk):
 
 @login_required
 def team_detail(request):
-    try:
-        team = Team.objects.get(user=request.user)
-    except Team.DoesNotExist:
-        team = Team.objects.create(user=request.user)
+    gameshow = Gameshow.objects.current()
+    team, created = gameshow.team_set.get_or_create(user=request.user)
     if team.is_editable:
         form_set = TeamFormSet(request.POST or None, instance=team)
         if form_set.is_valid():
@@ -72,8 +60,9 @@ def team_detail(request):
 
 @login_required
 def points_detail(request):
-    predictions = Prediction.objects.order_by('event__date_performed')
-    users = User.objects.all()
+    gameshow = Gameshow.objects.current()
+    predictions = gameshow.prediction_set.order_by('event__date_performed')
+    users = gameshow.users.all()
     everything = []
     user_points = dict((u, 0) for u in users)
     for prediction in predictions:
