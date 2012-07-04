@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date, time
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -39,6 +39,10 @@ class Gameshow(models.Model):
                     user_points[team.user] += prediction.points / 2
         return user_points
 
+    def todays_predictions(self):
+        return [p for e in self.event_set.today()
+                    for p in e.prediction_set.all()]
+
 
 class Contestant(models.Model):
     """A contestant on a :model:`gameshow.Gameshow`."""
@@ -57,6 +61,13 @@ class Contestant(models.Model):
         return self.state == 'active'
 
 
+class EventManager(models.Manager):
+    def today(self):
+        return self.get_query_set().filter(
+                date__gte=datetime.combine(date.today(), time.min),
+                date__lte=datetime.combine(date.today(), time.max))
+
+
 class Event(models.Model):
     """
     An event on a :model:`gameshow.Gameshow`, has many
@@ -67,6 +78,8 @@ class Event(models.Model):
     name = models.CharField(max_length=50)
     date = models.DateTimeField(default=datetime.now)
     date_performed = models.DateTimeField(default=datetime.now)
+
+    objects = EventManager()
 
     def __unicode__(self):
         return '{0} {1}'.format(self.name, self.date)
@@ -124,6 +137,13 @@ class Prediction(models.Model):
     def team_match_points(self):
         return self.points / 2
 
+    def user_choices(self, user):
+        try:
+            return (self.userprediction_set.get(user=user).
+                    userpredictionchoice_set.all())
+        except UserPrediction.DoesNotExist:
+            return []
+
 class PredictionMatch(models.Model):
     prediction = models.ForeignKey(Prediction)
     event_contestant = models.ForeignKey(EventContestant)
@@ -170,6 +190,9 @@ class UserPredictionChoice(models.Model):
     """
     user_prediction = models.ForeignKey(UserPrediction)
     event_contestant = models.ForeignKey(EventContestant)
+
+    def __unicode__(self):
+        return unicode(self.event_contestant)
 
 
 class Team(models.Model):
