@@ -55,9 +55,6 @@ MEDIA_URL = '/static/'
 STATIC_ROOT = ''
 STATIC_URL = '/media/'
 
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = 'k(-e!u$e6&=&k&%if42kvrboj-u6kze-^x=q+*)3zozl9yv^4v'
-
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -91,3 +88,9 @@ INSTALLED_APPS = (
     'bigbrother.gameshow',
     'south'
 )
+
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+    # Make this unique, and don't share it with anybody.
+    SECRET_KEY = 'k(-e!u$e6&=&k&%if42kvrboj-u6kze-^x=q+*)3zozl9yv^4v'

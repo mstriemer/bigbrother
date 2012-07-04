@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date, time
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -57,6 +57,13 @@ class Contestant(models.Model):
         return self.state == 'active'
 
 
+class EventManager(models.Manager):
+    def today(self):
+        return self.get_query_set().filter(
+                date__gte=datetime.combine(date.today(), time.min),
+                date__lte=datetime.combine(date.today(), time.max))
+
+
 class Event(models.Model):
     """
     An event on a :model:`gameshow.Gameshow`, has many
@@ -67,6 +74,8 @@ class Event(models.Model):
     name = models.CharField(max_length=50)
     date = models.DateTimeField(default=datetime.now)
     date_performed = models.DateTimeField(default=datetime.now)
+
+    objects = EventManager()
 
     def __unicode__(self):
         return '{0} {1}'.format(self.name, self.date)
@@ -124,6 +133,10 @@ class Prediction(models.Model):
     def team_match_points(self):
         return self.points / 2
 
+    def user_choices(self, user):
+        raise NotImplemented('This should find the UserPredictionChoice'
+                ' objects for the provided user')
+
 class PredictionMatch(models.Model):
     prediction = models.ForeignKey(Prediction)
     event_contestant = models.ForeignKey(EventContestant)
@@ -170,6 +183,9 @@ class UserPredictionChoice(models.Model):
     """
     user_prediction = models.ForeignKey(UserPrediction)
     event_contestant = models.ForeignKey(EventContestant)
+
+    def __unicode__(self):
+        return unicode(self.event_contestant)
 
 
 class Team(models.Model):
