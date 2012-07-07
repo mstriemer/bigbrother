@@ -112,6 +112,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.staticfiles',
     'bigbrother.gameshow',
+    'bigbrother.bootstrap',
     'south',
     'django_nose',
     'compressor',
