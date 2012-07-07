@@ -1,4 +1,9 @@
 # Django settings for bigbrother project.
+import os
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+root_path = lambda p: os.path.join(PROJECT_ROOT, p)
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -45,7 +50,7 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = '/Users/Mark/Projects/bigbrother/media/'
+MEDIA_ROOT = root_path('media/')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -73,7 +78,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'bigbrother.urls'
 
 TEMPLATE_DIRS = (
-    '/Users/Mark/Projects/bigbrother/templates'
+    root_path('templates')
 )
 
 INSTALLED_APPS = (
@@ -91,9 +96,3 @@ INSTALLED_APPS = (
 )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
-
-    # Make this unique, and don't share it with anybody.
-    SECRET_KEY = 'k(-e!u$e6&=&k&%if42kvrboj-u6kze-^x=q+*)3zozl9yv^4v'
