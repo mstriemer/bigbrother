@@ -6,3 +6,4 @@ include/
 env-bigbrother
 settings/local.py
 /static
+.DS_Store
