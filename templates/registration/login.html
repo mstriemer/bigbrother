@@ -1,18 +1,15 @@
 {% extends "base.html" %}
 
+{% load bootstrap_toolkit %}
+
 {% block "content" %}
-<div class="object-detail">
-    <h2>Login</h2>
-    <form action="{% url django.contrib.auth.views.login %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{% url gameshow.views.dashboard %}{% endif %}" />
-        <table id="login-form">
-            {{ form.as_table }}
-            <tr>
-                <td>&nbsp;</td>
-                <td><input type="submit" value="Login" /></td>
-            </tr>
-        </table>
-    </form>
-</div>
+<h2>Login</h2>
+<form action="{% url django.contrib.auth.views.login %}" method="post" class="form-horizontal">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{% url gameshow.views.dashboard %}{% endif %}" />
+    {{ form|as_bootstrap }}
+    <div class="form-actions">
+        <input type="submit" class="btn btn-primary" value="Log In">
+    </div>
+</form>
 {% endblock %}
