@@ -116,6 +116,7 @@ INSTALLED_APPS = (
     'south',
     'django_nose',
     'compressor',
+    'bootstrap_toolkit',
 )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
