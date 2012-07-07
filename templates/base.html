@@ -44,7 +44,9 @@
                 </div>
             </div>
             {% include "messages.html" %}
-            {% block "content" %}{% endblock %}
+            <div class="row">
+                {% block "content" %}{% endblock %}
+            </div>
         </div>
     </body>
 </html>
