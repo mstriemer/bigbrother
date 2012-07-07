@@ -1,12 +1,15 @@
-<div id="dashboard-team">
-    <div class="dashboard-title">Team</div>
+{% load bootstrap_toolkit %}
+
+<div class="well">
+    <h3>Team</h3>
     {% if team.is_editable and team_form_set %}
-    <form action="{% url gameshow.views.team_detail %}" method="post">
+    <form action="{% url gameshow.views.team_detail %}" method="post" class="form-inline" id="team-form">
         {% csrf_token %}
-        <ul class="object-list">
-            {{ team_form_set.as_ul }}
-            <li><input type="submit" value="Save" /></li>
-        </ul>
+        {{ team_form_set.management_form }}
+        {% for form in team_form_set %}
+            {{ form|as_bootstrap }}
+        {% endfor %}
+        <input type="submit" class="btn btn-primary" value="Save">
     </form>
     {% else %}
     <ul class="object-list">

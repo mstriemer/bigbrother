@@ -1,4 +1,4 @@
-from django.forms import ModelForm, ModelChoiceField
+from django.forms import ModelForm, ModelChoiceField, Select
 from django.forms.models import BaseModelFormSet, inlineformset_factory
 
 from gameshow.models import UserPrediction, UserPredictionChoice, \
@@ -9,8 +9,9 @@ UserPredictionFormSet = inlineformset_factory(UserPrediction,
 
 
 class TeamMembershipForm(ModelForm):
-    contestant = ModelChoiceField(queryset=Contestant.objects.filter(
-            gameshow=Gameshow.objects.current()))
+    contestant = ModelChoiceField(
+            queryset=Contestant.objects.filter(gameshow=Gameshow.objects.current()),
+            widget=Select(attrs={'class': 'span2'}))
 
     class Meta:
         model = TeamMembership
