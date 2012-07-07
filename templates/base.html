@@ -1,8 +1,12 @@
+{% load compress %}
 <!DOCTYPE HTML>
 <html>
 <head>
     <title>{% block "extra_title" %}{% endblock %}BigBrother</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/base.css" />
+    {% compress css %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dashboard.css">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/base.css">
+    {% endcompress %}
     {% block "head" %}{% endblock %}
 </head>
 <body>

@@ -5,3 +5,4 @@ bin/
 include/
 env-bigbrother
 settings/local.py
+/static

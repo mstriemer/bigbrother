@@ -1,6 +1,5 @@
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
-from django.contrib import databrowse
 from django.conf import settings
 from django.views.generic.simple import redirect_to
 
