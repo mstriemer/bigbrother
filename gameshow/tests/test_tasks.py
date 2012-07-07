@@ -59,12 +59,6 @@ class SendEmailRemindersTest(TestCase):
         for email in mail.outbox:
             self.assertIn(name, email.body)
 
-    def test_users_are_informed_of_how_many_choices_to_make(self):
-        self.predictions[0].number_of_choices = 8128
-        send_prediction_reminder_emails([self.predictions[0]], [self.users[0]])
-        for email in mail.outbox:
-            self.assertIn(u'{} (pick 8128)'.format(self.titles[0]), email.body)
-
 
 @patch.object(Gameshow, 'objects')
 class TestNotifyUsersOfTodaysPredictions(TestCase):

@@ -39,6 +39,10 @@ class Gameshow(models.Model):
                     user_points[team.user] += prediction.points / 2
         return user_points
 
+    def todays_predictions(self):
+        return [p for e in self.event_set.today()
+                    for p in e.prediction_set.all()]
+
 
 class Contestant(models.Model):
     """A contestant on a :model:`gameshow.Gameshow`."""
@@ -134,8 +138,11 @@ class Prediction(models.Model):
         return self.points / 2
 
     def user_choices(self, user):
-        raise NotImplemented('This should find the UserPredictionChoice'
-                ' objects for the provided user')
+        try:
+            return (self.userprediction_set.get(user=user).
+                    userpredictionchoice_set.all())
+        except UserPrediction.DoesNotExist:
+            return []
 
 class PredictionMatch(models.Model):
     prediction = models.ForeignKey(Prediction)

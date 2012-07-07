@@ -12,12 +12,16 @@ def send_prediction_reminder_emails(predictions, users):
     for user in users:
         message = [u'The following predictions are due today:', u'']
         for prediction in predictions:
-            message.append(u'* {name} (pick {nchoices})'.format(
-                name=prediction, nchoices=prediction.number_of_choices))
-            for i, choice in enumerate(prediction.user_choices(user)):
-                message.append(u'    {i}. {choice}'.format(choice=choice, i=i))
-            else:
-                message.append(u'    * You have not made a prediction')
+            message.append(u'* {name}'.format(name=prediction))
+            choices = prediction.user_choices(user)
+            for i in xrange(prediction.number_of_choices):
+                if i < len(choices):
+                    message.append(u'    {i}. {choice}'.format(
+                            choice=choices[i], i=i + 1))
+                else:
+                    message.append(
+                            u'    {i}. You have not made a prediction'.format(
+                                i=i + 1))
             message.append(u'')
         mails.append((subject, u'\n'.join(message), sender, [user.email]))
     send_mass_mail(mails)
