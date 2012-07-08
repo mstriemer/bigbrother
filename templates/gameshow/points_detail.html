@@ -2,32 +2,31 @@
 {% load gameshow_tags %}
 
 {% block "content" %}
-<p><a href="{% url gameshow.views.dashboard %}">Back</a></p>
-<div class="object-detail">
-<h2>Points</h2>
+<div class="span12">
+    <h2>Points</h2>
 
-{% for prediction in everything %}
-<h3>{{ prediction.prediction.event_name }} - {{ prediction.prediction.event_date }}</h3>
-<table class="points-table">
-    <tr>
-        <th>Player</th>
-        <th>Prediction Points</th>
-        <th>Team Points</th>
-        <th>Event Points</th>
-        <th>Old Total Points</th>
-        <th>New Total Points</th>
-    </tr>
-    {% for user, points in prediction.users.items %}
-    <tr>
-        <td>{{ user.username }}</td>
-        <td class="right-align">{{ points.prediction_points }}</td>
-        <td class="right-align">{{ points.team_points }}</td>
-        <td class="right-align">{{ points.event_points }}</td>
-        <td class="right-align">{{ points.old_total_points }}</td>
-        <td class="right-align">{{ points.new_total_points }}</td>
-    </tr>
+    {% for prediction in everything %}
+    <h3>{{ prediction.prediction.event_name }} - {{ prediction.prediction.event_date }}</h3>
+    <table class="table table-striped">
+        <tr>
+            <th>Player</th>
+            <th class="table-numerical">Prediction Points</th>
+            <th class="table-numerical">Team Points</th>
+            <th class="table-numerical">Event Points</th>
+            <th class="table-numerical">Old Total Points</th>
+            <th class="table-numerical">New Total Points</th>
+        </tr>
+        {% for user, points in prediction.users.items %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td class="table-numerical">{{ points.prediction_points }}</td>
+            <td class="table-numerical">{{ points.team_points }}</td>
+            <td class="table-numerical">{{ points.event_points }}</td>
+            <td class="table-numerical">{{ points.old_total_points }}</td>
+            <td class="table-numerical">{{ points.new_total_points }}</td>
+        </tr>
+        {% endfor %}
+    </table>
     {% endfor %}
-</table>
-{% endfor %}
 </div>
 {% endblock %}

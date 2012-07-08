@@ -61,7 +61,8 @@ def team_detail(request):
 @login_required
 def points_detail(request):
     gameshow = Gameshow.objects.current()
-    predictions = gameshow.prediction_set.order_by('event__date_performed')
+    predictions = gameshow.prediction_set.order_by('event__date_performed'
+            ).filter(event__date_performed__lte=datetime.today())
     users = gameshow.users.all()
     everything = []
     user_points = dict((u, 0) for u in users)
