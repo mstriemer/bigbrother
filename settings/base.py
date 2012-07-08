@@ -112,9 +112,11 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.staticfiles',
     'bigbrother.gameshow',
+    'bigbrother.bootstrap',
     'south',
     'django_nose',
     'compressor',
+    'bootstrap_toolkit',
 )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
