@@ -1,16 +1,21 @@
 {% extends "base.html" %}
 
+{% load bootstrap_toolkit %}
+
 {% block "content" %}
-<p><a href="{% url gameshow.views.dashboard %}">Back</a></p>
-<div class="object-detail">
+<div class="span6">
     <h2>Team</h2>
     {% if form_set %}
-    <form action="{% url gameshow.views.team_detail %}" method="post">
+    <form action="{% url gameshow.views.team_detail %}" method="post" class="form-horizontal">
         {% csrf_token %}
-        <ul class="object-list">
-            {{ form_set.as_ul }}
-            <li><input type="submit" value="Save" /></li>
-        </ul>
+        {{ form_set.management_form }}
+        {% for form in form_set %}
+        {{ form|as_bootstrap }}
+        {% endfor %}
+        <div class="form-actions">
+            <input class="btn btn-primary" type="submit" value="Save" />
+            <a href="{% url gameshow.views.dashboard %}" class="btn">Cancel</a>
+        </div>
     </form>
     {% else %}
     <ul>

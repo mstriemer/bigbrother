@@ -1,14 +1,24 @@
-    <form action="{% url gameshow.views.prediction_detail pk=prediction.pk %}" method="post">
+{% extends "base.html" %}
+
+{% load bootstrap_toolkit %}
+
+{% block "content" %}
+<div class="span6">
+    <form action="{% url gameshow.views.prediction_detail pk=prediction.pk %}" method="post" class="form-horizontal">
         {% csrf_token %}
-        <ul>
-            <li>{{ prediction.description }}</li>
-            {{ form.as_ul }}
-            <li><input type="submit" value="Save" /></li>
-        </ul>
+        {{ form.management_form }}
+        <fieldset>
+            <legend>{{ prediction.prediction.event.name }} on {{ prediction.prediction.event.date }}</legend>
+            <div class="control-group">
+                {% for f in form %}
+                {{ f|as_bootstrap }}
+                {% endfor %}
+            </div>
+            <div class="form-actions">
+                <input type="submit" value="Save" class="btn btn-primary">
+                <a href="{% url gameshow.views.dashboard %}" class="btn">Cancel</a>
+            </div>
+        </fieldset>
     </form>
-    <!--ul>
-        <li>{ { prediction.description }}: { { prediction.contestant }}</li>
-        { % if prediction.event.is_complete %}
-            <li>Winner: { { prediction.event.winner }}</li>
-        { % endif %}
-    </ul-->
+</div>
+{% endblock %}

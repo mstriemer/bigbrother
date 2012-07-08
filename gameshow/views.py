@@ -3,6 +3,7 @@ from datetime import datetime
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.contrib import messages
+from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 
 from gameshow.models import Gameshow, UserPrediction
@@ -35,13 +36,12 @@ def prediction_detail(request, pk):
             form.save()
             messages.success(request, '{0} prediction successfully'
                 ' updated'.format(prediction.prediction.event.name))
-            return redirect('/bigbrother/')
+            return redirect(reverse('gameshow.views.dashboard'))
         else:
-            return render_to_response('gameshow/prediction_edit.html',
+            return render_to_response('gameshow/prediction_form.html',
                 {'form': form, 'prediction': prediction},
                 context_instance=RequestContext(request))
-    return render_to_response('gameshow/prediction_detail.html',
-        {'prediction': prediction}, context_instance=RequestContext(request))
+    return redirect(reverse('gameshow.views.dashboard'))
 
 @login_required
 def team_detail(request):
