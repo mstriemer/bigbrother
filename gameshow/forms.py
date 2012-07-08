@@ -1,8 +1,8 @@
 from django.forms import ModelForm, ModelChoiceField, Select
-from django.forms.models import BaseModelFormSet, inlineformset_factory
+from django.forms.models import inlineformset_factory
 
-from gameshow.models import UserPrediction, UserPredictionChoice, \
-                            EventContestant, Team, TeamMembership, Contestant, Gameshow
+from gameshow.models import (UserPrediction, UserPredictionChoice,
+        EventContestant, Team, TeamMembership, Contestant, Gameshow)
 
 UserPredictionFormSet = inlineformset_factory(UserPrediction,
     UserPredictionChoice, can_delete=False)
@@ -10,7 +10,8 @@ UserPredictionFormSet = inlineformset_factory(UserPrediction,
 
 class TeamMembershipForm(ModelForm):
     contestant = ModelChoiceField(
-            queryset=Contestant.objects.filter(gameshow=Gameshow.objects.current()),
+            queryset=Contestant.objects.filter(
+                gameshow=Gameshow.objects.current()),
             widget=Select(attrs={'class': 'span2'}))
 
     class Meta:
@@ -30,6 +31,7 @@ class UserPredictionChoiceForm(ModelForm):
         self.fields['event_contestant'].queryset = \
             EventContestant.objects.filter(
             event=kwargs['instance'].user_prediction.prediction.event)
+        raise RuntimeError(self.fields['event_contestant'].label)
 
 
 class UserPredictionForm(ModelForm):

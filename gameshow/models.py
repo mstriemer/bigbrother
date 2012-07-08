@@ -135,7 +135,7 @@ class Prediction(models.Model):
 
     @property
     def team_match_points(self):
-        return self.points / 2
+        return self.points / 2 if self.can_match_team else 0
 
     def user_choices(self, user):
         try:
@@ -168,8 +168,24 @@ class UserPrediction(models.Model):
 
     @property
     def choices(self):
-        return map(lambda c: c.event_contestant, \
-            self.userpredictionchoice_set.all())
+        return self.event_contestants.all()
+
+    def total_points(self):
+        points = 0
+        matches = [m.contestant for m in self.prediction.matches.all()]
+        for event_contestant in self.event_contestants.all():
+            if event_contestant.contestant in matches:
+                points += self.prediction.points
+        try:
+            if self.prediction.can_match_team:
+                for teammate in Team.objects.get(
+                        gameshow=self.prediction.event.gameshow, user=self.user
+                        ).contestants.all():
+                    if teammate in matches:
+                        points += self.prediction.team_match_points
+        except Team.DoesNotExist:
+            pass
+        return points
 
     def as_form(self, data=None):
         FormSet = inlineformset_factory(UserPrediction,
@@ -180,6 +196,7 @@ class UserPrediction(models.Model):
         for form in form_set:
             form.fields['event_contestant'].queryset = \
                 self.prediction.event.eventcontestant_set.all().order_by('contestant__name')
+            form.fields['event_contestant'].label = 'Contestant'
         return form_set
 
 
