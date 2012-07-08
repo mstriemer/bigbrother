@@ -1,14 +1,12 @@
 {% extends "base.html" %}
 
 {% block "content" %}
-<div class="dashboard-section">
+<div class="span3">
     {% include "gameshow/dashboard_points.html" %}
     {% include "gameshow/dashboard_team.html" %}
 </div>
 
-<div class="dashboard-section">
+<div class="span9">
     {% include "gameshow/dashboard_predictions.html" %}
 </div>
-
-<div class="clear"></div>
 {% endblock %}
