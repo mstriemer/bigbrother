@@ -1,4 +1,5 @@
 {% load bootstrap_toolkit %}
+{% load gameshow_tags %}
 
 <div class="page-header">
     <h1>Predictions</h1>
@@ -12,9 +13,7 @@
                 <small>
                     {{ prediction.description }}
                     {% if not user_prediction.is_editable %}
-                    <span class="badge badge-{% if user_prediction.total_points > 0 %}success{% else %}important{% endif %}">
-                        {{ user_prediction.total_points }} points
-                    </span>
+                    {{ user_prediction.total_points|display_points }}
                     {% endif %}
                 </small>
             </div>
@@ -55,9 +54,9 @@
                 <ol>
                     {% for match in prediction.matches.all %}
                     {% if match in user_prediction.event_contestants.all %}
-                    <li>{{ match.contestant }} <span class="badge badge-success">{{ prediction.points }} points</span></li>
+                    <li>{{ match.contestant }} {{ prediction.points|display_points }}</span></li>
                     {% else %}
-                    <li>{{ match.contestant }} <span class="badge badge-important">0 points</span></li>
+                    <li>{{ match.contestant }} {{ 0|display_points }}</li>
                     {% endif %}
                     {% endfor %}
                 </ol>
@@ -68,7 +67,7 @@
                 <ol>
                     {% for member in team.contestants.all %}
                     {% if member in prediction.contestants %}
-                        <li>{{ member }} <span class="badge badge-success">{{ prediction.team_match_points }} points</span></li>
+                        <li>{{ member }} {{ prediction.team_match_points|display_points }}</li>
                     {% endif %}
                     {% endfor %}
                 </ol>

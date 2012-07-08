@@ -1,4 +1,6 @@
 from django import template
+from django.utils.html import conditional_escape
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
@@ -19,3 +21,15 @@ def user_team_match_points(user, prediction):
             if contestant in prediction.contestants:
                 points += prediction.points / 2
     return points
+
+
+@register.filter
+def display_points(points, autoescape=None):
+    if autoescape:
+        esc = conditional_escape
+    else:
+        esc = lambda p: p
+    style = 'success' if points > 0 else 'important'
+    return mark_safe('<span class="badge badge-{style}">{points}</span>'.format(
+            style=style, points=esc(points)))
+display_points.needs_autoescape = True
