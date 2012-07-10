@@ -1,49 +1,60 @@
-from __future__ import print_function
+import os
 from datetime import datetime
 
-from fabric.api import local, run, env, cd, sudo
+from fabric.api import run, env, cd, sudo, settings
 
-env.hosts = ['deploy@ubuntu']
+env.user = 'mark'
+env.hosts = ['{}@striemer.ca'.format(env.user)]
+env.app_name = 'bigbrother'
+env.repo_name = 'repo'
+env.root_dir = os.path.join('/var/apps', env.app_name)
+env.repo_dir = os.path.join(env.root_dir, env.repo_name)
+env.shared_settings = os.path.join(env.root_dir, 'shared/settings/local.py')
+env.local_settings = os.path.join(env.repo_dir, 'settings/local.py')
+env.environment_dir = os.path.join('/var/apps/environments', env.app_name)
+env.branch_name = 'master'
 
-def archive(branch='master'):
-    with cd("~/bigbrother"):
-        run("git pull")
-        run("git archive --format zip --output archive.zip {0}".format(branch))
+def update_repo():
+    with settings(warn_only=True):
+        if run('test -d {repo_dir}'.format(**env)).failed:
+            sudo('git clone git://github.com/mstriemer/{app_name}.git '
+                '{repo_dir}'.format(**env))
+            sudo('chown -R {user}:{user} {repo_dir}'.format(**env))
+    with cd(env.repo_dir):
+        run('git fetch origin')
+        sha = run('git ls-remote origin {branch_name}'.format(**env)).split()[0]
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        run('git checkout -b deploy_{timestamp} {sha}'.format(
+                timestamp=timestamp, sha=sha))
 
-def expand(target='/var/apps/bigbrother/releases/'):
-    folder = datetime.now().strftime('%Y%m%d%H%M%S')
-    sudo("mkdir -p {0}{1}/bigbrother".format(target, folder))
-    sudo("unzip ~/bigbrother/archive.zip -d {0}{1}/bigbrother".format(target,
-        folder))
-    run("rm ~/bigbrother/archive.zip")
-    hack_local_files(target, folder)
-    update_symlinks(target, folder)
+def update_symlinks():
+    create_symlink = None
+    create_shared_settings = None
+    with settings(warn_only=True):
+        create_shared_settings = run('test -e {shared_settings}'.format(**env)).failed
+        create_symlink = run('test -e {local_settings}'.format(**env)).failed
+    if create_shared_settings:
+        sudo('mkdir -p {shared_settings_dir}'.format(
+                shared_settings_dir=os.path.dirname(env.shared_settings)))
+        sudo('touch {shared_settings}'.format(**env))
+    if create_symlink:
+        with cd(os.path.dirname(env.local_settings)):
+            run('ln -s {shared_settings}'.format(**env))
 
-def hack_local_files(target, folder):
-    current = target + folder + '/bigbrother'
-    sudo("mv {0}/settings.py {0}/settings.py.orig".format(current))
-    sudo("cp {0}current/bigbrother/settings.py {1}/settings.py".format(
-        target, current))
+def update_packages():
+    with settings(warn_only=True):
+        if run('test -d {environment_dir}'.format(**env)).failed:
+            run('virtualenv {environment_dir}'.format(**env))
+    run('pip install -r {requirements} -E {environment}'.format(
+            requirements=os.path.join(env.repo_dir, 'requirements.txt'),
+            environment=env.environment_dir))
 
-def update_symlinks(target, folder):
-    current = target + folder
-    previous = target + 'current'
-    sudo("ln -s /lib/django-trunk/django/contrib/admin/static/admin "
-        "{0}/bigbrother/media/admin".format(current))
-    sudo("rm {0}".format(previous))
-    sudo("ln -s {0} {1}".format(current, previous))
+def deploy(branch='master'):
+    env.branch_name = branch
+    update_repo()
+    update_packages()
+    update_symlinks()
+    restart_app()
 
-
-def reload_apache():
-    sudo("/etc/init.d/apache2 reload")
-
-def deploy(branch=None, expand_target=None):
-    if branch is None:
-        archive()
-    else:
-        archive(branch)
-    if expand_target is None:
-        expand()
-    else:
-        expand(expand_target)
-    reload_apache()
+def restart_app():
+    sudo('service {app_name} restart'.format(**env))
