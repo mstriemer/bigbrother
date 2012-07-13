@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 
-from fabric.api import run, env, cd, sudo, settings
+from fabric.api import run, env, cd, sudo, settings, prefix
 
 env.user = 'mark'
 env.hosts = ['{}@striemer.ca'.format(env.user)]
@@ -26,6 +26,8 @@ def update_repo():
         timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
         run('git checkout -b deploy_{timestamp} {sha}'.format(
                 timestamp=timestamp, sha=sha))
+        manage('collectstatic --noinput')
+        manage('compress')
 
 def update_symlinks():
     create_symlink = None
@@ -54,7 +56,19 @@ def deploy(branch='master'):
     update_repo()
     update_packages()
     update_symlinks()
-    restart_app()
+    print("To restart the app run 'restart'")
 
-def restart_app():
+def restart():
     sudo('service {app_name} restart'.format(**env))
+
+def syncdb():
+    manage('syncdb')
+
+def migrate():
+    manage('migrate')
+
+def manage(command):
+    with cd(env.repo_dir):
+        with prefix('source {virtualenv}'.format(virtualenv=os.path.join(
+                env.environment_dir, 'bin', 'activate'))):
+            run("python manage.py {command}".format(command=command))
