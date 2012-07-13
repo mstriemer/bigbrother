@@ -7,7 +7,7 @@ from gameshow.models import Team, TeamMembership, Contestant, Gameshow
 class TeamMembershipForm(ModelForm):
     contestant = ModelChoiceField(
             queryset=Contestant.objects.filter(
-                gameshow=Gameshow.objects.current()),
+                gameshow=Gameshow.objects.current(), state='active'),
             widget=Select(attrs={'class': 'span2'}))
 
     class Meta:
