@@ -7,7 +7,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^$', redirect_to, {'url': '/bigbrother/'}),
-    (r'^bigbrother/', include('bigbrother.gameshow.urls')),
+    (r'^bigbrother/', include('gameshow.urls')),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
     (r'^accounts/login/$', 'django.contrib.auth.views.login'),

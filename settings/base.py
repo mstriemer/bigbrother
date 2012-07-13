@@ -96,7 +96,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'bigbrother.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
     root_path('templates')
@@ -111,8 +111,8 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.staticfiles',
-    'bigbrother.gameshow',
-    'bigbrother.bootstrap',
+    'gameshow',
+    'bootstrap',
     'south',
     'django_nose',
     'compressor',
