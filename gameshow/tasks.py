@@ -1,4 +1,7 @@
-from django.core.mail import send_mass_mail
+import string
+from random import choice
+
+from django.core.mail import send_mass_mail, send_mail
 
 from gameshow.models import Gameshow
 
@@ -31,3 +34,32 @@ def notify_users_of_todays_predictions():
     predictions = gameshow.todays_predictions()
     users = gameshow.users.all()
     send_prediction_reminder_emails(predictions, users)
+
+def reset_user_password(user):
+    letters = string.letters + string.digits
+    password = ''.join(choice(letters) for _ in xrange(13))
+    user.set_password(password)
+    user.save()
+    return password
+
+def send_password_info(user):
+    password = reset_user_password(user)
+    body = u'''
+    Hi {first_name},
+
+    Your password has been reset and you can now login with:
+
+        * Username: {username}
+        * Password: {password}
+
+    See you at http://bigbrother.striemer.ca and good luck!
+    '''.format(first_name=user.first_name, username=user.username,
+            password=password)
+    return send_mail(u'[Big Brother] Your Password', body, u'bigbrother@striemer.ca',
+            [user.email])
+
+def send_all_password_info():
+    gameshow = Gameshow.objects.current()
+    users = gameshow.users.all()
+    for user in users:
+        send_password_info(user)
