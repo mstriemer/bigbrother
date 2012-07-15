@@ -4,6 +4,6 @@ lib/
 bin/
 include/
 env-bigbrother
-settings/local.py
-/static
+bigbrother/settings/local.py
+bigbrother/static
 .DS_Store
