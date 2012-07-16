@@ -10,7 +10,7 @@ env.repo_name = 'repo'
 env.root_dir = os.path.join('/var/apps', env.app_name)
 env.repo_dir = os.path.join(env.root_dir, env.repo_name)
 env.shared_settings = os.path.join(env.root_dir, 'shared/settings/local.py')
-env.local_settings = os.path.join(env.repo_dir, 'settings/local.py')
+env.local_settings = os.path.join(env.repo_dir, 'bigbrother/settings/local.py')
 env.environment_dir = os.path.join('/var/apps/environments', env.app_name)
 env.branch_name = 'master'
 
@@ -26,8 +26,6 @@ def update_repo():
         timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
         run('git checkout -b deploy_{timestamp} {sha}'.format(
                 timestamp=timestamp, sha=sha))
-        manage('collectstatic --noinput')
-        manage('compress')
 
 def update_symlinks():
     create_symlink = None
@@ -56,6 +54,8 @@ def deploy(branch='master'):
     update_repo()
     update_packages()
     update_symlinks()
+    manage('collectstatic --noinput')
+    manage('compress')
     print("To restart the app run 'restart'")
 
 def restart():
