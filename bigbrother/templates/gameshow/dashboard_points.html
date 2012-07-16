@@ -10,7 +10,7 @@
         <tbody>
             {% for user, points in user_points %}
             <tr>
-                <td>{{ user }}</td>
+                <td>{{ user.first_name }}</td>
                 <td class="right-align">{{ points }}</td>
             </tr>
             {% endfor %}
