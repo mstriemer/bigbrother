@@ -12,9 +12,9 @@
         <input type="submit" class="btn btn-primary" value="Save">
     </form>
     {% else %}
-    <ul class="object-list">
+    <ul id="team-list">
         {% for member in team.contestants.all %}
-        <li{% if not member.is_active %} class="inactive"{% endif %}>
+        <li class="{% if not member.is_active %}in{% endif %}active">
             {{ member }}
         </li>
         {% empty %}
