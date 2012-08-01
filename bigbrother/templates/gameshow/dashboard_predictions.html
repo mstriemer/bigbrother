@@ -12,7 +12,9 @@
                 {{ prediction.event.name }}
                 <small>
                     {{ prediction.description }}
-                    {% if not user_prediction.is_editable %}
+                    {% if user_prediction.is_editable %}
+                    {{ prediction.points|display_points:0 }}
+                    {% else %}
                     {{ user_prediction.total_points|display_points }}
                     {% endif %}
                 </small>
