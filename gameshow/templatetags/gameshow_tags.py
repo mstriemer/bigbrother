@@ -25,14 +25,14 @@ def user_team_match_points(user, prediction):
 
 @register.filter
 def display_points(points, completed=True, autoescape=None):
-    if autoescape:
-        esc = conditional_escape
-    else:
-        esc = lambda p: p
     if completed:
         style = 'success' if points > 0 else 'important'
+        title = 'Points received'
     else:
         style = 'warning'
-    return mark_safe('<span class="badge badge-{style}">{points}</span>'.format(
-            style=style, points=esc(points)))
+        title = 'Points for correct prediction'
+    if autoescape:
+        points = conditional_escape(points)
+    return mark_safe('<span class="badge badge-{style}" title="{title}">'
+            '{points}</span>'.format(style=style, points=points, title=title))
 display_points.needs_autoescape = True
