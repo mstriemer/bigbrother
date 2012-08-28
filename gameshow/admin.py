@@ -10,6 +10,18 @@ class EventContestantInline(admin.TabularInline):
     extra = 0
     exclude = ('result',)
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'contestant':
+            try:
+                pk = int(request.path.split('/')[-2])
+                event = Event.objects.get(pk=pk)
+                kwargs['queryset'] = event.gameshow.contestant_set.filter(
+                        state='active').order_by('name')
+            except ValueError:
+                pass
+        return super(EventContestantInline, self).formfield_for_foreignkey(
+                db_field, request, **kwargs)
+
 
 class EventInline(admin.TabularInline):
     model = Event
