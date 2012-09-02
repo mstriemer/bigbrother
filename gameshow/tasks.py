@@ -13,7 +13,8 @@ def send_prediction_reminder_emails(predictions, users):
     subject = u"[Big Brother] Today's Predictions"
     sender = u'bigbrother@striemer.ca'
     for user in users:
-        message = [u'The following predictions are due today:', u'']
+        message = [u'The following predictions are due today on '
+                    'http://bigbrother.striemer.ca:', u'']
         for prediction in predictions:
             message.append(u'* {name}'.format(name=prediction))
             choices = prediction.user_choices(user)
