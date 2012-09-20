@@ -3,7 +3,48 @@
 
 {% block "content" %}
 <div class="span12">
-    <h2>Points</h2>
+    <h2>Winners</h2>
+
+    <ul>
+        <li>1<sup>st</sup> Place: {{ winners.first }} ($180)</li>
+        <li>2<sup>nd</sup> Place: {{ winners.second }} ($40)</li>
+        <li>3<sup>rd</sup> Place: {{ winners.third }} ($20)</li>
+        <li>Most Prediction Points: {{ winners.prediction }} ($10)</li>
+        <li>Most Team Points: {{ winners.team }} ($10)</li>
+    </ul>
+
+    <h2>Total Points</h2>
+
+    <table class="table table-striped">
+        <tr>
+            <th>Player</th>
+            <th class="table-numerical">Total Prediction Points</th>
+            <th class="table-numerical">Total Team Points</th>
+            <th class="table-numerical">Total Points</th>
+        </tr>
+        {% for user, points in totals.items %}
+        <tr>
+            <td>{{ user.first_name }}</td>
+            <td class="table-numerical">
+                <span {% if points.prediction == max_points.prediction %}class="badge badge-success"{% endif %}>
+                    {{ points.prediction }}
+                </span>
+            </td>
+            <td class="table-numerical">
+                <span {% if points.team == max_points.team %}class="badge badge-success"{% endif %}>
+                    {{ points.team }}
+                </span>
+            </td>
+            <td class="table-numerical">
+                <span {% if points.total == max_points.total %}class="badge badge-success"{% endif %}>
+                    {{ points.total }}
+                </span>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Event Points</h2>
 
     {% for prediction in everything %}
     <h3>{{ prediction.prediction.event_name }} - {{ prediction.prediction.event_date }}</h3>
