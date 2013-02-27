@@ -153,6 +153,7 @@ COMPRESS_PRECOMPILERS = (
     ('text/less', 'lessc {infile} {outfile}'),
 )
 COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = True
 
 import dj_database_url
 DATABASES['default'] =  dj_database_url.config()
