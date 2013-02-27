@@ -17,7 +17,7 @@ urlpatterns = patterns('',
         '/bigbrother/'}),
 )
 
-if settings.DEBUG:
+if settings.SERVE_STATIC:
     urlpatterns += patterns('',
         url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {
             'document_root': settings.MEDIA_ROOT,
