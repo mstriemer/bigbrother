@@ -19,6 +19,12 @@ if [ -f bin/install_nodejs ]; then
         chmod +x bin/install_less
         bin/install_less
     fi
+
+    if [ -f bin/install_coffee ]; then
+        echo "-----> Running install_coffee"
+        chmod +x bin/install_coffee
+        bin/install_coffee
+    fi
 fi
 
 if [ -f bin/run_collectstatic ]; then
