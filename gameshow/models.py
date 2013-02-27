@@ -12,7 +12,7 @@ CONTESTANT_STATE_CHOICES = (
 
 class GameshowManager(models.Manager):
     def current(self):
-        return self.get_query_set().get(pk=2)
+        return self.get_query_set().get(pk=1)
 
 
 class Gameshow(models.Model):
