@@ -116,6 +116,7 @@ INSTALLED_APPS = (
     'bootstrap',
     'south',
     'django_nose',
+    'storages',
     'compressor',
     'bootstrap_toolkit',
 )
@@ -155,9 +156,22 @@ COMPRESS_PRECOMPILERS = (
 COMPRESS_ENABLED = True
 COMPRESS_OFFLINE = True
 
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+
 import dj_database_url
 DATABASES['default'] =  dj_database_url.config()
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-SERVE_STATIC = os.environ.get('SERVE_STATIC', 'True') == 'True'
+if not DEBUG:
+    STATIC_URL = 'https://s3.amazonaws.com/bb-pool/static/'
+    ADMIN_MEDIA_PREFIX = 'https://s3.amazonaws.com/bb-pool/static/admin/'
+    COMPRESS_URL = STATIC_URL
+
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    COMPRESS_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+    AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
