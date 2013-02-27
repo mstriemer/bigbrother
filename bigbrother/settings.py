@@ -5,7 +5,7 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 root_path = lambda p: os.path.join(PROJECT_ROOT, p)
 
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
