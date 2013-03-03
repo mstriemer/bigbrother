@@ -153,7 +153,6 @@ COMPRESS_PRECOMPILERS = (
     ('text/coffeescript', 'coffee --compile --stdio'),
     ('text/less', 'lessc {infile} {outfile}'),
 )
-COMPRESS_ENABLED = True
 COMPRESS_OFFLINE = True
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
@@ -169,8 +168,10 @@ if not DEBUG:
     COMPRESS_URL = STATIC_URL
 
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    COMPRESS_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    STATICFILES_STORAGE = DEFAULT_FILE_STORAGE
+    COMPRESS_STORAGE = DEFAULT_FILE_STORAGE
+    COMPRESS_ROOT = STATIC_ROOT
+    COMPRESS_ENABLED = True
 
     AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
     AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
