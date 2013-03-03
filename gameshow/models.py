@@ -222,7 +222,7 @@ class Team(models.Model):
 
     @property
     def is_editable(self):
-        return datetime.now() < datetime(year=2012, month=8, day=5, hour=19,
+        return datetime.now() < datetime(year=2013, month=3, day=14, hour=21,
                 minute=0, second=0)
 
 
