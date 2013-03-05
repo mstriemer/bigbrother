@@ -47,6 +47,9 @@
                                 <ul class="dropdown-menu">
                                     <li><a href="{% url django.contrib.auth.views.logout_then_login %}">Logout</a></li>
                                     <li><a href="{% url django.contrib.auth.views.password_change %}">Change password</a></li>
+                                    {% if user.is_staff %}
+                                    <li><a href="{% url admin:index %}">Admin</a></li>
+                                    {% endif %}
                                 </ul>
                             </li>
                         </ul>
