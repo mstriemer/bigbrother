@@ -1,4 +1,5 @@
 from datetime import datetime, date, time
+from collections import defaultdict
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -30,7 +31,7 @@ class Gameshow(models.Model):
         return Prediction.objects.filter(event__gameshow__pk=self.pk)
 
     def calculate_points(self):
-        user_points = dict([(u, 0) for u in self.users.all()])
+        user_points = defaultdict(lambda: 0)
         for event in self.event_set.all():
             for prediction in event.prediction_set.all():
                 for match in prediction.matching_user_predictions.all():
