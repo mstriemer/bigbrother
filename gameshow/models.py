@@ -171,6 +171,17 @@ class UserPrediction(models.Model):
     def choices(self):
         return self.event_contestants.all()
 
+    def user_prediction_choices_count(self):
+        return self.userpredictionchoice_set.count()
+    user_prediction_choices_count.short_description = 'Choices made'
+
+    def choices_available(self):
+        return self.prediction.number_of_choices
+    choices_available.short_description = 'Choices available'
+
+    def too_many_choices(self):
+        return self.user_prediction_choices_count() > self.choices_available()
+
     def total_points(self):
         points = 0
         matches = [m.contestant for m in self.prediction.matches.all()]

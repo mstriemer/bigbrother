@@ -106,7 +106,8 @@ class EventContestantAdmin(admin.ModelAdmin):
 
 
 class UserPredictionAdmin(admin.ModelAdmin):
-    list_display = ('prediction', 'user')
+    list_display = ('prediction', 'user', 'user_prediction_choices_count',
+            'choices_available', 'too_many_choices')
     list_filter = ('prediction__event',)
     ordering = ('-prediction__event__date',)
     fields = ('prediction', 'user')
