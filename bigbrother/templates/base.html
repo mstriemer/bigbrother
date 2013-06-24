@@ -30,11 +30,11 @@
             <div class="navbar navbar-fixed-top">
                 <div class="navbar-inner">
                     <div class="container">
-                        <a class="brand" href="/">Big Brother 14</a>
+                        <a class="brand" href="{% url gameshow.views.dashboard gameshow.slug %}">{{ gameshow.name }}</a>
                         <ul class="nav">
                             <li><a href="{% url gameshow.views.rules %}">Rules</a></li>
                             {% if user.is_authenticated %}
-                            <li><a href="{% url gameshow.views.points_detail %}">Points</a></li>
+                            <li><a href="{% url gameshow.views.points_detail gameshow.slug %}">Points</a></li>
                             {% endif %}
                         </ul>
                         {% if user.is_authenticated %}

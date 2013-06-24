@@ -1,11 +1,10 @@
 from django.conf.urls.defaults import patterns
-from django.views.generic.simple import direct_to_template
 
 urlpatterns = patterns('',
-    (r'^$', 'gameshow.views.dashboard'),
-    (r'^predictions/(?P<pk>\d+)/$', 'gameshow.views.prediction_detail'),
-    (r'^team/$', 'gameshow.views.team_detail'),
-    (r'^rules/$', direct_to_template, {'template':
-    'gameshow/bigbrother_rules.html'}, 'gameshow.views.rules'),
-    (r'^points/$', 'gameshow.views.points_detail'),
+    (r'^$', 'gameshow.views.redirect_to_current'),
+    (r'^rules/$', 'gameshow.views.rules'),
+    (r'^(?P<gameshow_slug>[a-z0-9-]+)/$', 'gameshow.views.dashboard'),
+    (r'^(?P<gameshow_slug>[a-z0-9-]+)/predictions/(?P<pk>\d+)/$', 'gameshow.views.prediction_detail'),
+    (r'^(?P<gameshow_slug>[a-z0-9-]+)/team/$', 'gameshow.views.team_detail'),
+    (r'^(?P<gameshow_slug>[a-z0-9-]+)/points/$', 'gameshow.views.points_detail'),
 )

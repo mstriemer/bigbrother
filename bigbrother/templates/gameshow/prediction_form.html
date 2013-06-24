@@ -4,7 +4,7 @@
 
 {% block "content" %}
 <div class="span6">
-    <form action="{% url gameshow.views.prediction_detail pk=prediction.pk %}" method="post" class="form-horizontal">
+    <form action="{% url gameshow.views.prediction_detail gameshow_slug=gameshow.slug pk=prediction.pk %}" method="post" class="form-horizontal">
         {% csrf_token %}
         {{ form.management_form }}
         <fieldset>

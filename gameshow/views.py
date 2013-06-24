@@ -5,15 +5,25 @@ from django.template import RequestContext
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.utils.functional import curry
 
 from gameshow.models import Gameshow, UserPrediction
-from gameshow.forms import TeamFormSet
+from gameshow.forms import TeamFormSet, TeamMembershipForm
+
+def redirect_to_current(request):
+    gameshow = Gameshow.objects.current()
+    return redirect(
+        reverse('gameshow.views.dashboard', args=[gameshow.slug]))
 
 @login_required
-def dashboard(request):
-    gameshow = Gameshow.objects.current()
+def dashboard(request, gameshow_slug):
+    gameshow = Gameshow.objects.get(slug=gameshow_slug)
     team, created = gameshow.team_set.get_or_create(user=request.user)
-    team_form_set = TeamFormSet(instance=team) if team.is_editable else None
+    if team.is_editable:
+        team_form_set = TeamFormSet(instance=team)
+        team_form_set.form = staticmethod(curry(TeamMembershipForm, team=team))
+    else:
+        team_form_set = None
     user_points = gameshow.calculate_points().items()
     user_points.sort(key=lambda up: up[1], reverse=True)
     predictions = []
@@ -24,11 +34,12 @@ def dashboard(request):
     return render_to_response('gameshow/dashboard.html',
         {'gameshow': gameshow, 'user_points': user_points,
         'predictions': predictions, 'team': team,
-        'team_form_set': team_form_set},
+        'team_form_set': team_form_set, 'gameshow': gameshow},
         context_instance=RequestContext(request))
 
 @login_required
-def prediction_detail(request, pk):
+def prediction_detail(request, gameshow_slug, pk):
+    gameshow = Gameshow.objects.get(slug=gameshow_slug)
     prediction = UserPrediction.objects.get(pk=pk, user=request.user)
     if prediction.prediction.event.date > datetime.now():
         form = prediction.as_form(request.POST or None)
@@ -36,31 +47,39 @@ def prediction_detail(request, pk):
             form.save()
             messages.success(request, '{0} prediction successfully'
                 ' updated'.format(prediction.prediction.event.name))
-            return redirect(reverse('gameshow.views.dashboard'))
+            return redirect(
+                reverse('gameshow.views.dashboard', args=[gameshow.slug]))
         else:
             return render_to_response('gameshow/prediction_form.html',
-                {'form': form, 'prediction': prediction},
+                {'form': form, 'prediction': prediction, 'gameshow': gameshow},
                 context_instance=RequestContext(request))
-    return redirect(reverse('gameshow.views.dashboard'))
+    return redirect(reverse('gameshow.views.dashboard', args=[gameshow.slug]))
 
 @login_required
-def team_detail(request):
-    gameshow = Gameshow.objects.current()
+def team_detail(request, gameshow_slug):
+    gameshow = Gameshow.objects.get(slug=gameshow_slug)
     team, created = gameshow.team_set.get_or_create(user=request.user)
     if team.is_editable:
         form_set = TeamFormSet(request.POST or None, instance=team)
         if form_set.is_valid():
             form_set.save()
             messages.success(request, 'Your team was successfully updated')
-            return redirect('/bigbrother/')
+            return redirect(
+                reverse('gameshow.views.dashboard', args=[gameshow.slug]))
     else:
         form_set = None
-    return render_to_response('gameshow/team_detail.html', {'team': team,
-        'form_set': form_set}, context_instance=RequestContext(request))
+    return render_to_response('gameshow/team_detail.html',
+        {'team': team, 'form_set': form_set, 'gameshow': gameshow},
+        context_instance=RequestContext(request))
+
+def rules(request):
+    gameshow = Gameshow.objects.current()
+    return render_to_response('gameshow/bigbrother_rules.html',
+        {'gameshow': gameshow}, context_instance=RequestContext(request))
 
 @login_required
-def points_detail(request):
-    gameshow = Gameshow.objects.current()
+def points_detail(request, gameshow_slug):
+    gameshow = Gameshow.objects.get(slug=gameshow_slug)
     predictions = gameshow.prediction_set.order_by('event__date_performed'
             ).filter(event__date_performed__lte=datetime.today())
     users = gameshow.users.all()
@@ -112,6 +131,6 @@ def points_detail(request):
     winners['second'] = total_points[-2][0].first_name
     winners['third'] = total_points[-3][0].first_name
     return render_to_response('gameshow/points_detail.html',
-            {'everything': everything, 'totals': user_points,
-                'max_points': max_points, 'winners': winners},
-            context_instance=RequestContext(request))
+        {'everything': everything, 'totals': user_points,
+        'max_points': max_points, 'winners': winners, 'gameshow': gameshow},
+        context_instance=RequestContext(request))

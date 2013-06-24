@@ -13,7 +13,7 @@ CONTESTANT_STATE_CHOICES = (
 
 class GameshowManager(models.Manager):
     def current(self):
-        return self.get_query_set().get(pk=1)
+        return self.get_query_set().latest('pk')
 
 
 class Gameshow(models.Model):
@@ -21,6 +21,7 @@ class Gameshow(models.Model):
     objects = GameshowManager()
 
     name = models.CharField(max_length=50)
+    slug = models.SlugField()
     users = models.ManyToManyField(User)
 
     def __unicode__(self):
@@ -234,7 +235,7 @@ class Team(models.Model):
 
     @property
     def is_editable(self):
-        return datetime.now() < datetime(year=2013, month=3, day=13, hour=20,
+        return datetime.now() < datetime(year=2013, month=7, day=13, hour=20,
                 minute=0, second=0)
 
 
@@ -245,3 +246,7 @@ class TeamMembership(models.Model):
     """
     team = models.ForeignKey(Team)
     contestant = models.ForeignKey(Contestant)
+
+    @property
+    def gameshow(self):
+        return self.team.gameshow

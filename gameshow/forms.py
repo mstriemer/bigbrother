@@ -1,14 +1,30 @@
 from django import forms
 from django.forms.models import inlineformset_factory
 
-from gameshow.models import Team, TeamMembership, Contestant, Gameshow
+from gameshow.models import Team, TeamMembership, Contestant
 
+
+class TeamForm(forms.ModelForm):
+    team_members = forms.ModelMultipleChoiceField(
+        queryset=Contestant.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        super(TeamForm, self).__init__(*args, **kwargs)
+        self.fields['team_members'].queryset = Contestant.objects.filter(
+                gameshow=self.instance.gameshow, state='active')
 
 class TeamMembershipForm(forms.ModelForm):
     contestant = forms.ModelChoiceField(
-            queryset=Contestant.objects.filter(
-                gameshow=Gameshow.objects.current(), state='active'),
+            queryset=Contestant.objects.filter(state='active'),
             widget=forms.Select(attrs={'class': 'span2'}))
+
+    def __init__(self, *args, **kwargs):
+        team = kwargs.pop('team')
+        super(TeamMembershipForm, self).__init__(*args, **kwargs)
+        if team is not None:
+            contestant = self.fields['contestant']
+            contestant.queryset = contestant.queryset.filter(
+                gameshow=team.gameshow)
 
     class Meta:
         model = TeamMembership
