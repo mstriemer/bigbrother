@@ -24,7 +24,7 @@
         {% if user_prediction.is_editable %}
         <div class="row">
             <div class="span9">
-                <form action="{% url gameshow.views.prediction_detail gameshow_slug=gameshow.slug pk=user_prediction.pk %}" method="post" class="form-horizontal prediction-form">
+                <form action="{% url "gameshow.views.prediction_detail" gameshow_slug=gameshow.slug pk=user_prediction.pk %}" method="post" class="form-horizontal prediction-form">
                     {% csrf_token %}
                     {% with formset=user_prediction.as_form %}
                     {{ formset.management_form }}

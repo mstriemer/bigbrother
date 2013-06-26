@@ -1,3 +1,4 @@
+{% load admin_urls %}
 {% load compress %}
 <!DOCTYPE html>
 <html>
@@ -30,11 +31,11 @@
             <div class="navbar navbar-fixed-top">
                 <div class="navbar-inner">
                     <div class="container">
-                        <a class="brand" href="{% url gameshow.views.dashboard gameshow.slug %}">{{ gameshow.name }}</a>
+                        <a class="brand" href="{% url "gameshow.views.dashboard" gameshow.slug %}">{{ gameshow.name }}</a>
                         <ul class="nav">
-                            <li><a href="{% url gameshow.views.rules %}">Rules</a></li>
+                            <li><a href="{% url "gameshow.views.rules" %}">Rules</a></li>
                             {% if user.is_authenticated %}
-                            <li><a href="{% url gameshow.views.points_detail gameshow.slug %}">Points</a></li>
+                            <li><a href="{% url "gameshow.views.points_detail" gameshow.slug %}">Points</a></li>
                             {% endif %}
                         </ul>
                         {% if user.is_authenticated %}
@@ -45,10 +46,10 @@
                                     <b class="caret"></b>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="{% url django.contrib.auth.views.logout_then_login %}">Logout</a></li>
-                                    <li><a href="{% url django.contrib.auth.views.password_change %}">Change password</a></li>
+                                    <li><a href="{% url "django.contrib.auth.views.logout_then_login" %}">Logout</a></li>
+                                    <li><a href="{% url "django.contrib.auth.views.password_change" %}">Change password</a></li>
                                     {% if user.is_staff %}
-                                    <li><a href="{% url admin:index %}">Admin</a></li>
+                                    <li><a href="{% url "admin:index" %}">Admin</a></li>
                                     {% endif %}
                                 </ul>
                             </li>

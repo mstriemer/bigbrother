@@ -19,7 +19,7 @@ class TeamMembershipForm(forms.ModelForm):
             widget=forms.Select(attrs={'class': 'span2'}))
 
     def __init__(self, *args, **kwargs):
-        team = kwargs.pop('team')
+        team = kwargs.pop('team', None)
         super(TeamMembershipForm, self).__init__(*args, **kwargs)
         if team is not None:
             contestant = self.fields['contestant']
@@ -37,6 +37,8 @@ def _team_form_set_clean(self):
     contestants = []
     error_msg = None
     for form in self.forms:
+        if 'contestant' not in form.cleaned_data:
+            continue
         contestant = form.cleaned_data['contestant']
         if contestant in contestants:
             error_msg = "You may only add a contestant to your team once."

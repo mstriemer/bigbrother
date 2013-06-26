@@ -5,10 +5,9 @@ from django.template import RequestContext
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-from django.utils.functional import curry
 
 from gameshow.models import Gameshow, UserPrediction
-from gameshow.forms import TeamFormSet, TeamMembershipForm
+from gameshow.forms import TeamFormSet
 
 def redirect_to_current(request):
     gameshow = Gameshow.objects.current()
@@ -19,11 +18,7 @@ def redirect_to_current(request):
 def dashboard(request, gameshow_slug):
     gameshow = Gameshow.objects.get(slug=gameshow_slug)
     team, created = gameshow.team_set.get_or_create(user=request.user)
-    if team.is_editable:
-        team_form_set = TeamFormSet(instance=team)
-        team_form_set.form = staticmethod(curry(TeamMembershipForm, team=team))
-    else:
-        team_form_set = None
+    team_form_set = TeamFormSet(instance=team) if team.is_editable else None
     user_points = gameshow.calculate_points().items()
     user_points.sort(key=lambda up: up[1], reverse=True)
     predictions = []

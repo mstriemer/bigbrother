@@ -3,7 +3,7 @@
 <div class="well">
     <h3>Team</h3>
     {% if team.is_editable and team_form_set %}
-    <form action="{% url gameshow.views.team_detail gameshow.slug %}" method="post" class="form-inline" id="team-form">
+    <form action="{% url "gameshow.views.team_detail" gameshow.slug %}" method="post" class="form-inline" id="team-form">
         {% csrf_token %}
         {{ team_form_set.management_form }}
         {% for form in team_form_set %}

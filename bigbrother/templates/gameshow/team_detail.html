@@ -6,7 +6,7 @@
 <div class="span6">
     <h2>Team</h2>
     {% if form_set %}
-    <form action="{% url gameshow.views.team_detail %}" method="post" class="form-horizontal">
+    <form action="{% url "gameshow.views.team_detail" gameshow.slug %}" method="post" class="form-horizontal">
         {% csrf_token %}
         {{ form_set.management_form }}
         {% for form in form_set %}
@@ -14,7 +14,7 @@
         {% endfor %}
         <div class="form-actions">
             <input class="btn btn-primary" type="submit" value="Save" />
-            <a href="{% url gameshow.views.dashboard %}" class="btn">Cancel</a>
+            <a href="{% url "gameshow.views.dashboard" gameshow.slug %}" class="btn">Cancel</a>
         </div>
     </form>
     {% else %}

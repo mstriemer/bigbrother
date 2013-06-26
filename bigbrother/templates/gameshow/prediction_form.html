@@ -4,7 +4,7 @@
 
 {% block "content" %}
 <div class="span6">
-    <form action="{% url gameshow.views.prediction_detail gameshow_slug=gameshow.slug pk=prediction.pk %}" method="post" class="form-horizontal">
+    <form action="{% url "gameshow.views.prediction_detail" gameshow_slug=gameshow.slug pk=prediction.pk %}" method="post" class="form-horizontal">
         {% csrf_token %}
         {{ form.management_form }}
         <fieldset>
@@ -16,7 +16,7 @@
             </div>
             <div class="form-actions">
                 <input type="submit" value="Save" class="btn btn-primary">
-                <a href="{% url gameshow.views.dashboard %}" class="btn">Cancel</a>
+                <a href="{% url "gameshow.views.dashboard" %}" class="btn">Cancel</a>
             </div>
         </fieldset>
     </form>
