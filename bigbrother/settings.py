@@ -9,7 +9,7 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
+    ('Mark Striemer', 'mstriemer@gmail.com'),
 )
 
 MANAGERS = ADMINS
