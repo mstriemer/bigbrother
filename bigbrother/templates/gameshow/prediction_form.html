@@ -16,7 +16,7 @@
             </div>
             <div class="form-actions">
                 <input type="submit" value="Save" class="btn btn-primary">
-                <a href="{% url "gameshow.views.dashboard" %}" class="btn">Cancel</a>
+                <a href="{% url "gameshow.views.dashboard" gameshow.slug %}" class="btn">Cancel</a>
             </div>
         </fieldset>
     </form>
