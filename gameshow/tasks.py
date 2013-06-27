@@ -53,7 +53,7 @@ def send_password_info(user):
         * Username: {username}
         * Password: {password}
 
-    See you at http://bigbrother.striemer.ca and good luck!
+    See you at https://bb-pool.herokuapp.com and good luck!
     '''.format(first_name=user.first_name, username=user.username,
             password=password)
     return send_mail(u'[Big Brother] Your Password', body, u'bigbrother@striemer.ca',
