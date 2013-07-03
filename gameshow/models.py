@@ -23,6 +23,7 @@ class Gameshow(models.Model):
     name = models.CharField(max_length=50)
     slug = models.SlugField()
     users = models.ManyToManyField(User)
+    teams_editable_before = models.DateTimeField()
 
     def __unicode__(self):
         return self.name
@@ -235,8 +236,7 @@ class Team(models.Model):
 
     @property
     def is_editable(self):
-        return datetime.now() < datetime(year=2013, month=7, day=13, hour=20,
-                minute=0, second=0)
+        return datetime.now() < self.gameshow.teams_editable_before
 
 
 class TeamMembership(models.Model):
