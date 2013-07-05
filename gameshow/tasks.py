@@ -3,7 +3,9 @@ from random import choice
 
 from django.core.mail import send_mass_mail, send_mail
 
-from gameshow.models import Gameshow
+from datetime import timedelta, datetime, date, time
+
+from gameshow.models import Gameshow, EventContestant
 
 
 def send_prediction_reminder_emails(predictions, users):
@@ -56,11 +58,99 @@ def send_password_info(user):
     See you at https://bb-pool.herokuapp.com and good luck!
     '''.format(first_name=user.first_name, username=user.username,
             password=password)
-    return send_mail(u'[Big Brother] Your Password', body, u'bigbrother@striemer.ca',
-            [user.email])
+    return send_mail(
+            u'[Big Brother] Your Password',
+            body,
+            u'bigbrother@striemer.ca',
+            [user.email]
+        )
 
 def send_all_password_info():
     gameshow = Gameshow.objects.current()
     users = gameshow.users.all()
     for user in users:
         send_password_info(user)
+
+def create_events_for_tomorrow():
+    tomorrow = date.today() + timedelta(days=1)
+    create_events_for_date(tomorrow)
+
+def create_events_for_date(date):
+    event_schedule = {
+        'Sunday': [
+            {
+                'name': 'Nominations',
+                'description': 'Predict nominee',
+                'points': 10,
+                'number_of_choices': 3,
+                'can_match_team': False,
+                'time': time(hour=19, minute=0, second=0),
+            },
+        ],
+        'Tuesday': [
+            {
+                'name': 'Big Brother MVP',
+                'description': 'Predict winner',
+                'points': 10,
+                'number_of_choices': 1,
+                'can_match_team': True,
+                'time': time(hour=20, minute=0, second=0),
+            },
+            {
+                'name': 'Power of Veto',
+                'description': 'Predict winner',
+                'points': 10,
+                'number_of_choices': 1,
+                'can_match_team': True,
+                'time': time(hour=20, minute=0, second=0),
+            },
+        ],
+        'Wednesday': [
+            {
+                'name': 'Eviction',
+                'description': 'Predict evictee',
+                'points': 5,
+                'number_of_choices': 1,
+                'can_match_team': False,
+                'time': time(hour=19, minute=0, second=0),
+            },
+            {
+                'name': 'Head of Household',
+                'description': 'Predict winner',
+                'points': 20,
+                'number_of_choices': 1,
+                'can_match_team': True,
+                'time': time(hour=19, minute=0, second=0),
+            },
+        ],
+    }
+    events = event_schedule.get(date.strftime('%A'))
+    if events is not None:
+        body = 'The following events were created:\n\n'
+        gameshow = Gameshow.objects.current()
+        contestants = gameshow.contestant_set.filter(state='active').all()
+        for event_data in events:
+            event_datetime = datetime.combine(date, event_data['time'])
+            event = gameshow.event_set.create(
+                name=event_data['name'],
+                date=event_datetime,
+                date_performed=event_datetime,
+            )
+            for contestant in contestants:
+                EventContestant.objects.create(event=event, contestant=contestant)
+            event.prediction_set.create(
+                points=event_data['points'],
+                description=event_data['description'],
+                number_of_choices=event_data['number_of_choices'],
+                can_match_team=event_data['can_match_team'],
+            )
+            body += '    * {name} ({url})\n'.format(
+                name=event,
+                url='https://bb-pool.herokuapp.com/admin/gameshow/event/{pk}/'.format(pk=event.pk),
+            )
+        send_mail(
+            u'[Big Brother] Events Created',
+            body,
+            u'bigbrother@striemer.ca',
+            ['mstriemer@gmail.com']
+        )
