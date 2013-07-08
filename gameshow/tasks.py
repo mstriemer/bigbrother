@@ -94,7 +94,7 @@ def create_events_for_date(date):
                 'points': 10,
                 'number_of_choices': 1,
                 'can_match_team': True,
-                'time': time(hour=20, minute=0, second=0),
+                'time': time(hour=19, minute=0, second=0),
             },
             {
                 'name': 'Power of Veto',
@@ -102,7 +102,7 @@ def create_events_for_date(date):
                 'points': 10,
                 'number_of_choices': 1,
                 'can_match_team': True,
-                'time': time(hour=20, minute=0, second=0),
+                'time': time(hour=19, minute=0, second=0),
             },
         ],
         'Thursday': [
@@ -112,7 +112,7 @@ def create_events_for_date(date):
                 'points': 5,
                 'number_of_choices': 1,
                 'can_match_team': False,
-                'time': time(hour=19, minute=0, second=0),
+                'time': time(hour=20, minute=0, second=0),
             },
             {
                 'name': 'Head of Household',
@@ -120,7 +120,7 @@ def create_events_for_date(date):
                 'points': 20,
                 'number_of_choices': 1,
                 'can_match_team': True,
-                'time': time(hour=19, minute=0, second=0),
+                'time': time(hour=20, minute=0, second=0),
             },
         ],
     }
