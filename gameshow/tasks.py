@@ -87,7 +87,7 @@ def create_events_for_date(date):
                 'time': time(hour=19, minute=0, second=0),
             },
         ],
-        'Tuesday': [
+        'Wednesday': [
             {
                 'name': 'Big Brother MVP',
                 'description': 'Predict winner',
@@ -105,7 +105,7 @@ def create_events_for_date(date):
                 'time': time(hour=20, minute=0, second=0),
             },
         ],
-        'Wednesday': [
+        'Thursday': [
             {
                 'name': 'Eviction',
                 'description': 'Predict evictee',
