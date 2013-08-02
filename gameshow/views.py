@@ -22,7 +22,7 @@ def dashboard(request, gameshow_slug):
     user_points = gameshow.calculate_points().items()
     user_points.sort(key=lambda up: up[1], reverse=True)
     predictions = []
-    for prediction in gameshow.prediction_set.order_by('-event__date'):
+    for prediction in gameshow.prediction_set.order_by('-event__date_performed'):
         user_prediction, created = prediction.userprediction_set.get_or_create(
                 user=request.user)
         predictions.append((prediction, user_prediction))
@@ -36,7 +36,7 @@ def dashboard(request, gameshow_slug):
 def prediction_detail(request, gameshow_slug, pk):
     gameshow = Gameshow.objects.get(slug=gameshow_slug)
     prediction = UserPrediction.objects.get(pk=pk, user=request.user)
-    if prediction.prediction.event.date > datetime.now():
+    if prediction.is_editable:
         form = prediction.as_form(request.POST or None)
         if form.is_valid():
             form.save()

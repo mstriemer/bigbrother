@@ -123,18 +123,20 @@ def create_events_for_tomorrow():
     tomorrow = date.today() + timedelta(days=1)
     create_events_for_date(tomorrow)
 
-def create_events_for_date(date):
-    events = event_schedule.get(date.strftime('%A'))
+def create_events_for_date(event_date):
+    events = event_schedule.get(event_date.strftime('%A'))
     if events is not None:
         body = 'The following events were created:\n\n'
         gameshow = Gameshow.objects.current()
         contestants = gameshow.contestant_set.filter(state='active').all()
         for event_data in events:
-            event_datetime = datetime.combine(date, event_data['time'])
+            tomorrow_datetime = datetime.combine(
+                    date.today() + timedelta(days=1), event_data['time'])
+            event_datetime = datetime.combine(event_date, event_data['time'])
             event = gameshow.event_set.create(
                 name=event_data['name'],
                 date=event_datetime,
-                date_performed=event_datetime,
+                date_performed=tomorrow_datetime,
             )
             for contestant in contestants:
                 EventContestant.objects.create(event=event, contestant=contestant)
