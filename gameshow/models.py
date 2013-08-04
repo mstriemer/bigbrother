@@ -43,7 +43,7 @@ class Gameshow(models.Model):
         return user_points
 
     def todays_predictions(self):
-        return [p for e in self.event_set.today()
+        return [p for e in self.event_set.due_today()
                     for p in e.prediction_set.all()]
 
 
@@ -65,10 +65,11 @@ class Contestant(models.Model):
 
 
 class EventManager(models.Manager):
-    def today(self):
+    def due_today(self):
+        today = date.today()
         return self.get_query_set().filter(
-                date__gte=datetime.combine(date.today(), time.min),
-                date__lte=datetime.combine(date.today(), time.max))
+                date_performed__gte=datetime.combine(today, time.min),
+                date_performed__lte=datetime.combine(today, time.max))
 
 
 class Event(models.Model):

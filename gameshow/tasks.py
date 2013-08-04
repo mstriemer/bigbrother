@@ -63,6 +63,8 @@ def send_prediction_reminder_emails(predictions, users):
     subject = u"[Big Brother] Today's Predictions"
     sender = u'bigbrother@striemer.ca'
     for user in users:
+        if not user.email:
+            continue
         message = [u'The following predictions are due today on '
                     'http://bigbrother.striemer.ca:', u'']
         for prediction in predictions:
