@@ -22,7 +22,8 @@ def dashboard(request, gameshow_slug):
     user_points = gameshow.calculate_points().items()
     user_points.sort(key=lambda up: up[1], reverse=True)
     predictions = []
-    for prediction in gameshow.prediction_set.order_by('-event__date_performed'):
+    for prediction in gameshow.prediction_set.order_by(
+            '-event__date_performed', '-event__date'):
         user_prediction, created = prediction.userprediction_set.get_or_create(
                 user=request.user)
         predictions.append((prediction, user_prediction))
