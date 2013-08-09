@@ -13,20 +13,12 @@ event_schedule = {
             'name': 'Nominations',
             'description': 'Predict nominee',
             'points': 10,
-            'number_of_choices': 3,
+            'number_of_choices': 2,
             'can_match_team': False,
             'time': time(hour=19, minute=0, second=0),
         },
     ],
     'Wednesday': [
-        {
-            'name': 'Big Brother MVP',
-            'description': 'Predict winner',
-            'points': 10,
-            'number_of_choices': 1,
-            'can_match_team': True,
-            'time': time(hour=19, minute=0, second=0),
-        },
         {
             'name': 'Power of Veto',
             'description': 'Predict winner',
