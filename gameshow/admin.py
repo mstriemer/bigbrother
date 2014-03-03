@@ -5,6 +5,10 @@ from gameshow.models import Gameshow, Contestant, Event, EventContestant, \
                             PredictionMatch, Team, TeamMembership
 
 
+class ContestantInline(admin.TabularInline):
+    model = Contestant
+    extra = 1
+
 class EventContestantInline(admin.TabularInline):
     model = EventContestant
     extra = 0
@@ -86,7 +90,7 @@ class TeamAdmin(admin.ModelAdmin):
 
 class GameshowAdmin(admin.ModelAdmin):
     list_display = ('name',)
-    inlines = (EventInline,)
+    inlines = (ContestantInline,)
 
 
 class ContestantAdmin(admin.ModelAdmin):

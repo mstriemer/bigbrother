@@ -51,7 +51,9 @@ class Contestant(models.Model):
     """A contestant on a :model:`gameshow.Gameshow`."""
     gameshow = models.ForeignKey(Gameshow)
     name = models.CharField(max_length=50)
-    state = models.CharField(max_length=15, choices=CONTESTANT_STATE_CHOICES)
+    state = models.CharField(max_length=15,
+                             choices=CONTESTANT_STATE_CHOICES,
+                             default='active')
 
     class Meta:
         ordering = ('name',)
