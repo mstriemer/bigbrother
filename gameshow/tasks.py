@@ -7,7 +7,46 @@ from datetime import timedelta, datetime, date, time
 
 from gameshow.models import Gameshow, EventContestant
 
-event_schedule = {}
+event_schedule = {
+    'Sunday': [
+        {
+            'name': 'Nominations',
+            'description': 'Predict nominee',
+            'points': 10,
+            'number_of_choices': 2,
+            'can_match_team': False,
+            'time': time(hour=20, minute=0, second=0),
+        },
+    ],
+    'Wednesday': [
+        {
+            'name': 'Power of Veto',
+            'description': 'Predict winner',
+            'points': 10,
+            'number_of_choices': 1,
+            'can_match_team': True,
+            'time': time(hour=20, minute=0, second=0),
+        },
+    ],
+    'Thursday': [
+        {
+            'name': 'Eviction',
+            'description': 'Predict evictee',
+            'points': 5,
+            'number_of_choices': 1,
+            'can_match_team': False,
+            'time': time(hour=20, minute=0, second=0),
+        },
+        {
+            'name': 'Head of Household',
+            'description': 'Predict winner',
+            'points': 20,
+            'number_of_choices': 1,
+            'can_match_team': True,
+            'time': time(hour=20, minute=0, second=0),
+        },
+    ],
+}
 
 def send_prediction_reminder_emails(predictions, users):
     if not predictions:
