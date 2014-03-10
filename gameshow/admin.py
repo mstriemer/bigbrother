@@ -99,7 +99,7 @@ class ContestantAdmin(admin.ModelAdmin):
 
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('name', 'date')
+    list_display = ('name', 'date', 'date_performed')
     ordering = ('-date',)
     inlines = (EventContestantInline, PredictionInline)
 

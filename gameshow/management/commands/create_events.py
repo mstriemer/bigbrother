@@ -8,11 +8,11 @@ class Command(BaseCommand):
     help = 'Create events for the next show night.'
 
     def handle(self, *args, **options):
-        today = date.today()
-        if today.strftime('%A') not in event_schedule:
-            return
+        last_show = date.today()
         one_day = timedelta(days=1)
-        next_show = today + one_day
-        while next_show.strftime('%A') not in event_schedule:
-            next_show += one_day
-        create_events_for_date(next_show)
+        has_show = lambda day: day.strftime('%A') in event_schedule
+        next_week = [last_show + timedelta(days=i) for i in range(1, 8)]
+        show_days = [day for day in next_week if has_show(day)]
+        for day in show_days:
+            create_events_for_date(day, due_date=last_show + one_day)
+            last_show = day

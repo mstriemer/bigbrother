@@ -36,6 +36,7 @@ event_schedule = {
             'number_of_choices': 1,
             'can_match_team': False,
             'time': time(hour=20, minute=0, second=0),
+            'day_offset': 7,
         },
         {
             'name': 'Head of Household',
@@ -117,23 +118,29 @@ def create_events_for_tomorrow():
     tomorrow = date.today() + timedelta(days=1)
     create_events_for_date(tomorrow)
 
-def create_events_for_date(event_date):
+def create_events_for_date(event_date, due_date=None):
+    url_format = 'https://bb-pool.herokuapp.com/admin/gameshow/event/{pk}/'
     events = event_schedule.get(event_date.strftime('%A'))
+    if due_date is None:
+        due_date = date.today() + timedelta(days=1)
     if events is not None:
         body = 'The following events were created:\n\n'
         gameshow = Gameshow.objects.current()
         contestants = gameshow.contestant_set.filter(state='active').all()
         for event_data in events:
-            tomorrow_datetime = datetime.combine(
-                    date.today() + timedelta(days=1), event_data['time'])
-            event_datetime = datetime.combine(event_date, event_data['time'])
+            day_offset = timedelta(days=event_data.get('day_offset', 0))
+            due_datetime = datetime.combine(due_date + day_offset,
+                                            event_data['time'])
+            event_datetime = datetime.combine(event_date + day_offset,
+                                              event_data['time'])
             event = gameshow.event_set.create(
                 name=event_data['name'],
                 date=event_datetime,
-                date_performed=tomorrow_datetime,
+                date_performed=due_datetime,
             )
             for contestant in contestants:
-                EventContestant.objects.create(event=event, contestant=contestant)
+                EventContestant.objects.create(event=event,
+                                               contestant=contestant)
             event.prediction_set.create(
                 points=event_data['points'],
                 description=event_data['description'],
@@ -142,7 +149,7 @@ def create_events_for_date(event_date):
             )
             body += '    * {name} ({url})\n'.format(
                 name=event,
-                url='https://bb-pool.herokuapp.com/admin/gameshow/event/{pk}/'.format(pk=event.pk),
+                url=url_format.format(pk=event.pk),
             )
         send_mail(
             u'[Big Brother] Events Created',
