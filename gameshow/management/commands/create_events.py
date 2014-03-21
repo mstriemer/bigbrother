@@ -7,7 +7,12 @@ from gameshow.tasks import create_events_for_date, event_schedule
 class Command(BaseCommand):
     help = 'Create events for the next show night.'
 
-    def handle(self, *args, **options):
+    def handle(self, day_to_create_events, *args, **options):
+        if date.today().strftime('%A') != day_to_create_events:
+            print("Not creating any events today.")
+            return
+        else:
+            print("Today's the day, creating events.")
         last_show = date.today()
         one_day = timedelta(days=1)
         has_show = lambda day: day.strftime('%A') in event_schedule
