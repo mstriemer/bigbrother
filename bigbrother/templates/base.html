@@ -40,6 +40,7 @@
                             <li><a href="{% url "gameshow.views.rules" %}">Rules</a></li>
                             {% if user.is_authenticated and gameshow %}
                             <li><a href="{% url "gameshow.views.points_detail" gameshow.slug %}">Points</a></li>
+                            <li><a href="{% url "gameshow.views.past_predictions" gameshow.slug %}">Past predictions</a></li>
                             {% endif %}
                         </ul>
                         {% if user.is_authenticated %}

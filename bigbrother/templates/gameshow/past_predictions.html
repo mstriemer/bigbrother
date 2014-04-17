@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block "content" %}
+<div class="span3">
+    {% include "gameshow/dashboard_team.html" %}
+    {% include "gameshow/dashboard_points.html" %}
+</div>
+<div class="span9">
+    <div class="page-header">
+        <h1>Past Predictions</h1>
+    </div>
+    {% for prediction, user_prediction in predictions %}
+        {% include "gameshow/dashboard_prediction.html" %}
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,87 +1,13 @@
-{% load bootstrap_toolkit %}
-{% load gameshow_tags %}
+<div class="page-header">
+    <h1>Upcoming Predictions</h1>
+</div>
+{% for prediction, user_prediction in upcoming_predictions %}
+    {% include "gameshow/dashboard_prediction.html" %}
+{% endfor %}
 
 <div class="page-header">
-    <h1>Predictions</h1>
+    <h1>Past Predictions</h1>
 </div>
-{% for prediction, user_prediction in predictions %}
-<div class="row">
-    <div class="span9">
-        <div class="row prediction-info">
-            <div class="span6 prediction-name">
-                {{ prediction.event.name }}
-                <small>
-                    {{ prediction.description }}
-                    {% if user_prediction.is_editable %}
-                    {{ prediction.points|display_points:0 }}
-                    {% else %}
-                    {{ user_prediction.total_points|display_points }}
-                    {% endif %}
-                </small>
-            </div>
-            <div class="span3 prediction-date">{{ prediction.event.date_performed }}</div>
-        </div>
-        {% if user_prediction.is_editable %}
-        <div class="row">
-            <div class="span9">
-                <form action="{% url "gameshow.views.prediction_detail" gameshow_slug=gameshow.slug pk=user_prediction.pk %}" method="post" class="form-horizontal prediction-form">
-                    {% csrf_token %}
-                    {% with formset=user_prediction.as_form %}
-                    {{ formset.management_form }}
-                    {% for form in formset %}
-                    {{ form|as_bootstrap }}
-                    {% endfor %}
-                    {% endwith %}
-                    <div class="form-actions">
-                        <input type="submit" value="Save" class="btn btn-primary">
-                    </div>
-                </form>
-            </div>
-        </div>
-        {% else %}
-        <div class="row">
-            <div class="span3">
-                You chose:
-                <ol>
-                    {% for choice in user_prediction.event_contestants.all %}
-                    <li>{{ choice }}</li>
-                    {% empty %}
-                    {# Looks like the user didn't make any choices #}
-                    <li>No prediction made</li>
-                    {% endfor %}
-                </ol>
-            </div>
-            <div class="span3">
-                Outcome:
-                <ol>
-                    {% for match in prediction.matches.all %}
-                    {% if match in user_prediction.event_contestants.all %}
-                    <li>{{ match.contestant }} {{ prediction.points|display_points }}</span></li>
-                    {% else %}
-                    <li>{{ match.contestant }} {{ 0|display_points }}</li>
-                    {% endif %}
-                    {% endfor %}
-                </ol>
-            </div>
-            <div class="span3">
-                Team Members:
-                {% if prediction.can_match_team %}
-                <ol>
-                    {% for member in team.contestants.all %}
-                    {% if member in prediction.contestants %}
-                        <li>{{ member }} {{ prediction.team_match_points|display_points }}</li>
-                    {% endif %}
-                    {% endfor %}
-                </ol>
-                {% else %}
-                <ul>
-                    <li>No points available</li>
-                </ul>
-                {% endif %}
-            </div>
-        </div>
-        {% endif %}
-    </div>
-</div>
-<hr>
+{% for prediction, user_prediction in past_predictions %}
+    {% include "gameshow/dashboard_prediction.html" %}
 {% endfor %}

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
@@ -14,6 +14,32 @@ def redirect_to_current(request):
     return redirect(
         reverse('gameshow.views.dashboard', args=[gameshow.slug]))
 
+
+def format_predictions(predictions, user):
+    def format_prediction(prediction):
+        user_prediction, created = prediction.userprediction_set.get_or_create(
+            user=user)
+        return (prediction, user_prediction)
+    return [format_prediction(prediction) for prediction in predictions]
+
+
+@login_required
+def past_predictions(request, gameshow_slug):
+    gameshow = Gameshow.objects.get(slug=gameshow_slug)
+    team, created = gameshow.team_set.get_or_create(user=request.user)
+    team_form_set = TeamFormSet(instance=team) if team.is_editable else None
+    user_points = gameshow.calculate_points().items()
+    user_points.sort(key=lambda up: up[1], reverse=True)
+    predictions = format_predictions(gameshow.prediction_set.filter(
+        event__date_performed__lte=datetime.now()).order_by(
+        '-event__date_performed', '-event__date'), request.user)
+    return render_to_response(
+        'gameshow/past_predictions.html',
+        {'gameshow': gameshow, 'predictions': predictions, 'team': team,
+         'user_points': user_points},
+        context_instance=RequestContext(request))
+
+
 @login_required
 def dashboard(request, gameshow_slug):
     gameshow = Gameshow.objects.get(slug=gameshow_slug)
@@ -21,16 +47,19 @@ def dashboard(request, gameshow_slug):
     team_form_set = TeamFormSet(instance=team) if team.is_editable else None
     user_points = gameshow.calculate_points().items()
     user_points.sort(key=lambda up: up[1], reverse=True)
-    predictions = []
-    for prediction in gameshow.prediction_set.order_by(
-            '-event__date_performed', '-event__date'):
-        user_prediction, created = prediction.userprediction_set.get_or_create(
-                user=request.user)
-        predictions.append((prediction, user_prediction))
+    now = datetime.now()
+    upcoming_predictions = format_predictions(gameshow.prediction_set.filter(
+        event__date_performed__gte=now).order_by(
+        'event__date_performed', 'event__date'), request.user)
+    past_predictions = format_predictions(gameshow.prediction_set.filter(
+        event__date_performed__lte=now,
+        event__date_performed__gte=now - timedelta(days=7)).order_by(
+        '-event__date_performed', '-event__date'), request.user)
     return render_to_response('gameshow/dashboard.html',
         {'gameshow': gameshow, 'user_points': user_points,
-        'predictions': predictions, 'team': team,
-        'team_form_set': team_form_set, 'gameshow': gameshow},
+        'upcoming_predictions': upcoming_predictions,
+        'past_predictions': past_predictions,
+        'team': team, 'team_form_set': team_form_set},
         context_instance=RequestContext(request))
 
 @login_required
