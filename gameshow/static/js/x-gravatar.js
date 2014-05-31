@@ -1,11 +1,14 @@
 xtag.register('x-gravatar', {
     lifecycle: {
         created: function () {
-            var img = new Image();
-            img.src = this.src;
-            img.height = this.size;
-            img.width = this.size;
-            this.appendChild(img);
+            this.img = new Image();
+            this.img.src = this.src;
+            this.img.height = this.size;
+            this.img.width = this.size;
+            this.appendChild(this.img);
+        },
+        attributeChanged: function () {
+            this.img.src = this.src;
         },
     },
     accessors: {

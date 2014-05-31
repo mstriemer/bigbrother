@@ -1,7 +1,8 @@
 document.addEventListener('DOMComponentsLoaded', function () {
     var appBar = document.querySelector('x-appbar');
+    var gravatar = document.querySelector('x-gravatar');
     var changeTo = document.querySelector('.gameshow-name');
     changeTo.addEventListener('change', function (e) {
-        appBar.heading = changeTo.value;
+        gravatar.email = changeTo.value;
     });
 });
