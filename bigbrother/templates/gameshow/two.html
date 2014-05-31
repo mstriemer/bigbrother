@@ -19,7 +19,17 @@
                 <x-gravatar email="mstriemer@gmail.com" size="40"></x-gravatar>
             </button>
         </x-appbar>
-        <input class="gameshow-name">
+        <x-flipbox>
+            <div>
+                <input class="gameshow-name" placeholder="Set title">
+            </div>
+            <div>
+                <ul>
+                    <li>Big Brother Canada 2</li>
+                    <li>Big Brother US 16</li>
+                </ul>
+            </div>
+        </x-flipbox>
         <script src="{% static "js/md5.js" %}"></script>
         <script src="{% static "js/brick-1.0.1.js" %}"></script>
         <script src="{% static "js/x-gravatar.js" %}"></script>

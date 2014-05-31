@@ -1,8 +1,15 @@
 document.addEventListener('DOMComponentsLoaded', function () {
     var appBar = document.querySelector('x-appbar');
-    var gravatar = document.querySelector('x-gravatar');
+    var flipBox = document.querySelector('x-flipbox');
     var changeTo = document.querySelector('.gameshow-name');
+
+    xtag.query(appBar, '.nav').forEach(function (nav) {
+        nav.addEventListener('click', function () {
+            flipBox.toggle();
+        });
+    });
+
     changeTo.addEventListener('change', function (e) {
-        gravatar.email = changeTo.value;
+        appBar.heading = changeTo.value;
     });
 });
