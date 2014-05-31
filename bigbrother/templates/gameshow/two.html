@@ -1,0 +1,28 @@
+{% load staticfiles %}
+<!doctype html>
+<html>
+    <head>
+        <title>Big Brother Two</title>
+        <link rel="stylesheet" href="{% static "css/brick-1.0.1.css" %}">
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <x-appbar>
+            <button class="nav">=</button>
+            <h1>Big Brother</h1>
+            <button class="me">
+                <x-gravatar email="mstriemer@gmail.com" size="40"></x-gravatar>
+            </button>
+        </x-appbar>
+        <input class="gameshow-name">
+        <script src="{% static "js/md5.js" %}"></script>
+        <script src="{% static "js/brick-1.0.1.js" %}"></script>
+        <script src="{% static "js/x-gravatar.js" %}"></script>
+        <script src="{% static "js/two.js" %}"></script>
+    </body>
+</html>
