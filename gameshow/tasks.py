@@ -3,11 +3,12 @@ from random import choice
 
 from django.core.mail import send_mass_mail, send_mail
 
-from datetime import timedelta, datetime, date, time
+from datetime import timedelta, datetime, date
 
 from gameshow.models import Gameshow, EventContestant
 
 event_schedule = {}
+
 
 def send_prediction_reminder_emails(predictions, users):
     if not predictions:
@@ -19,21 +20,22 @@ def send_prediction_reminder_emails(predictions, users):
         if not user.email:
             continue
         message = [u'The following predictions are due today on '
-                    'http://bigbrother.striemer.ca:', u'']
+                   'http://bigbrother.striemer.ca:', u'']
         for prediction in predictions:
             message.append(u'* {name}'.format(name=prediction))
             choices = prediction.user_choices(user)
             for i in xrange(prediction.number_of_choices):
                 if i < len(choices):
                     message.append(u'    {i}. {choice}'.format(
-                            choice=choices[i], i=i + 1))
+                                   choice=choices[i], i=i + 1))
                 else:
                     message.append(
-                            u'    {i}. You have not made a prediction'.format(
-                                i=i + 1))
+                        u'    {i}. You have not made a prediction'.format(
+                            i=i + 1))
             message.append(u'')
         mails.append((subject, u'\n'.join(message), sender, [user.email]))
     send_mass_mail(mails)
+
 
 def notify_users_of_todays_predictions():
     gameshow = Gameshow.objects.current()
@@ -41,12 +43,14 @@ def notify_users_of_todays_predictions():
     users = gameshow.users.all()
     send_prediction_reminder_emails(predictions, users)
 
+
 def reset_user_password(user):
     letters = string.letters + string.digits
     password = ''.join(choice(letters) for _ in xrange(13))
     user.set_password(password)
     user.save()
     return password
+
 
 def send_password_info(user):
     password = reset_user_password(user)
@@ -60,13 +64,14 @@ def send_password_info(user):
 
     See you at https://bb-pool.herokuapp.com and good luck!
     '''.format(first_name=user.first_name, username=user.username,
-            password=password)
+               password=password)
     return send_mail(
-            u'[Big Brother] Your Password',
-            body,
-            u'bigbrother@striemer.ca',
-            [user.email]
-        )
+        u'[Big Brother] Your Password',
+        body,
+        u'bigbrother@striemer.ca',
+        [user.email]
+    )
+
 
 def send_all_password_info():
     gameshow = Gameshow.objects.current()
@@ -74,9 +79,11 @@ def send_all_password_info():
     for user in users:
         send_password_info(user)
 
+
 def create_events_for_tomorrow():
     tomorrow = date.today() + timedelta(days=1)
     create_events_for_date(tomorrow)
+
 
 def create_events_for_date(event_date, due_date=None):
     url_format = 'https://bb-pool.herokuapp.com/admin/gameshow/event/{pk}/'
