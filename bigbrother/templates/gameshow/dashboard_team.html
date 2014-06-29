@@ -12,7 +12,7 @@
         </small>
     </h4>
     <div class="change-team-name">
-        <input type="text" name="name" placeholder="Alliance name" data-csrf-token="{{ csrf_token }}" value="{{ team.name }}" class="team-name-input">
+        <input type="text" name="name" placeholder="Alliance name" data-csrf-token="{{ csrf_token }}" value="{% if team.name %}{{ team.name }}{% endif %}" class="team-name-input">
     </div>
     {% if team.is_editable and team_form_set %}
     <form action="{% url "gameshow.views.team_detail" gameshow.slug %}" method="post" class="form-inline" id="team-form">

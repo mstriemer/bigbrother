@@ -25,7 +25,7 @@ jQuery(function ($) {
     });
     $teamNameLink.on('click', function (e) {
         e.preventDefault();
-        $teamNameInput.show();
+        $teamNameInput.show().focus();
         $teamNameLink.hide();
         $teamName.hide();
     });
