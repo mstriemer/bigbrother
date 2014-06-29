@@ -5,9 +5,15 @@
     {% include "gameshow/dashboard_prediction.html" %}
 {% endfor %}
 
-<div class="page-header">
-    <h1>Past Predictions</h1>
+{% if past_predictions %}
+    <div class="page-header">
+        <h1>Past Predictions</h1>
+    </div>
+    {% for prediction, user_prediction in past_predictions %}
+        {% include "gameshow/dashboard_prediction.html" %}
+    {% endfor %}
+{% endif %}
+
+<div class="text-center">
+    <a href="{% url "gameshow.views.past_predictions" gameshow.slug %}">All past predictions</a>
 </div>
-{% for prediction, user_prediction in past_predictions %}
-    {% include "gameshow/dashboard_prediction.html" %}
-{% endfor %}

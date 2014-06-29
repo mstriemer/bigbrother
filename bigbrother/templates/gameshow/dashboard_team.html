@@ -1,7 +1,7 @@
 {% load bootstrap_toolkit %}
 
 <div class="well">
-    <h3>Your Alliance</h3>
+    <h4>Your Alliance</h4>
     {% if team.is_editable and team_form_set %}
     <form action="{% url "gameshow.views.team_detail" gameshow.slug %}" method="post" class="form-inline" id="team-form">
         {% csrf_token %}
