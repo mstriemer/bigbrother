@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 
 from rest_framework import viewsets
 
-from gameshow.models import Gameshow, Team, UserPrediction
+from gameshow.models import Contestant, Gameshow, Team, UserPrediction
 from gameshow.forms import TeamFormSet
 
 
@@ -187,6 +187,10 @@ class GameshowViewSet(viewsets.ModelViewSet):
 
 class TeamViewSet(viewsets.ModelViewSet):
     model = Team
+
+
+class ContestantViewSet(viewsets.ModelViewSet):
+    model = Contestant
 
 
 class UserViewSet(viewsets.ModelViewSet):

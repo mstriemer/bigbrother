@@ -8,6 +8,7 @@ router = routers.DefaultRouter()
 router.register('gameshows', views.GameshowViewSet)
 router.register('users', views.UserViewSet)
 router.register('teams', views.TeamViewSet)
+router.register('contestants', views.ContestantViewSet)
 
 urlpatterns = patterns(
     '',
