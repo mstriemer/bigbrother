@@ -42,7 +42,10 @@ def past_predictions(request, gameshow_slug):
 
 @login_required
 def dashboard(request, gameshow_slug):
-    gameshow = Gameshow.objects.get(slug=gameshow_slug)
+    try:
+        gameshow = Gameshow.objects.get(slug=gameshow_slug)
+    except Gameshow.DoesNotExist:
+        return redirect_to_current(request)
     team, created = gameshow.team_set.get_or_create(user=request.user)
     team_form_set = TeamFormSet(instance=team) if team.is_editable else None
     user_points = gameshow.calculate_points().items()
