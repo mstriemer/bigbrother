@@ -1,7 +1,19 @@
 {% load bootstrap_toolkit %}
 
 <div class="well">
-    <h4>Your Alliance</h4>
+    <h4>
+        <span class="team-name">
+            {% if team.name %}{{ team.name }}{% else %}Your Alliance{% endif %}
+        </span>
+        <small>
+            <a href="#" class="set-team-name" data-api-url="{{ team.api_url }}">
+                Set name
+            </a>
+        </small>
+    </h4>
+    <div class="change-team-name">
+        <input type="text" name="name" placeholder="Alliance name" data-csrf-token="{{ csrf_token }}" value="{{ team.name }}" class="team-name-input">
+    </div>
     {% if team.is_editable and team_form_set %}
     <form action="{% url "gameshow.views.team_detail" gameshow.slug %}" method="post" class="form-inline" id="team-form">
         {% csrf_token %}

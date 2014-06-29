@@ -119,6 +119,7 @@ INSTALLED_APPS = (
     'storages',
     'compressor',
     'bootstrap_toolkit',
+    'rest_framework',
 )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
@@ -161,7 +162,7 @@ COMPRESS_PRECOMPILERS = (
     ('text/less', 'lessc {infile} {outfile}'),
 )
 COMPRESS_OFFLINE = not DEBUG
-COMPRESS_ENABLED = True
+COMPRESS_ENABLED = COMPRESS_OFFLINE
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
@@ -175,6 +176,19 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
+
+REST_FRAMEWORK = {
+    # Use hyperlinked styles by default.
+    # Only used if the `serializer_class` attribute is not set on a view.
+    'DEFAULT_MODEL_SERIALIZER_CLASS':
+        'rest_framework.serializers.HyperlinkedModelSerializer',
+
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
 
 if not DEBUG:
     STATIC_URL = 'https://s3.amazonaws.com/bb-pool/static/'

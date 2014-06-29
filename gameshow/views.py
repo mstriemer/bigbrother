@@ -5,8 +5,11 @@ from django.template import RequestContext
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
-from gameshow.models import Gameshow, UserPrediction
+from rest_framework import viewsets
+
+from gameshow.models import Gameshow, Team, UserPrediction
 from gameshow.forms import TeamFormSet
 
 
@@ -176,3 +179,15 @@ def points_detail(request, gameshow_slug):
         {'everything': everything, 'totals': user_points,
          'max_points': max_points, 'winners': winners, 'gameshow': gameshow},
         context_instance=RequestContext(request))
+
+
+class GameshowViewSet(viewsets.ModelViewSet):
+    model = Gameshow
+
+
+class TeamViewSet(viewsets.ModelViewSet):
+    model = Team
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    model = User

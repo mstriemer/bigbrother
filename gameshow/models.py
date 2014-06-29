@@ -44,7 +44,7 @@ class Gameshow(models.Model):
 
     def todays_predictions(self):
         return [p for e in self.event_set.due_today()
-                    for p in e.prediction_set.all()]
+                for p in e.prediction_set.all()]
 
 
 class Contestant(models.Model):
@@ -70,8 +70,8 @@ class EventManager(models.Manager):
     def due_today(self):
         today = date.today()
         return self.get_query_set().filter(
-                date_performed__gte=datetime.combine(today, time.min),
-                date_performed__lte=datetime.combine(today, time.max))
+            date_performed__gte=datetime.combine(today, time.min),
+            date_performed__lte=datetime.combine(today, time.max))
 
 
 class Event(models.Model):
@@ -109,7 +109,7 @@ class Prediction(models.Model):
     points = models.IntegerField()
     description = models.CharField(max_length=100)
     matches = models.ManyToManyField('EventContestant',
-        through='PredictionMatch')
+                                     through='PredictionMatch')
     number_of_choices = models.IntegerField()
     can_match_team = models.BooleanField()
 
@@ -150,6 +150,7 @@ class Prediction(models.Model):
         except UserPrediction.DoesNotExist:
             return []
 
+
 class PredictionMatch(models.Model):
     prediction = models.ForeignKey(Prediction)
     event_contestant = models.ForeignKey(EventContestant)
@@ -163,7 +164,7 @@ class UserPrediction(models.Model):
     user = models.ForeignKey(User)
     prediction = models.ForeignKey(Prediction)
     event_contestants = models.ManyToManyField(EventContestant,
-            through='UserPredictionChoice')
+                                               through='UserPredictionChoice')
 
     def __unicode__(self):
         return '{0}: {1}'.format(self.user, self.prediction)
@@ -205,14 +206,16 @@ class UserPrediction(models.Model):
         return points
 
     def as_form(self, data=None):
-        FormSet = inlineformset_factory(UserPrediction,
+        FormSet = inlineformset_factory(
+            UserPrediction,
             UserPredictionChoice, can_delete=False,
             extra=self.prediction.number_of_choices,
             max_num=self.prediction.number_of_choices)
         form_set = FormSet(data, instance=self)
         for form in form_set:
-            form.fields['event_contestant'].queryset = \
-                self.prediction.event.eventcontestant_set.all().order_by('contestant__name')
+            form.fields['event_contestant'].queryset = (
+                self.prediction.event.eventcontestant_set
+                .all().order_by('contestant__name'))
             form.fields['event_contestant'].label = 'Contestant'
         return form_set
 
@@ -236,10 +239,15 @@ class Team(models.Model):
     user = models.ForeignKey(User)
     contestants = models.ManyToManyField(Contestant, through='TeamMembership')
     gameshow = models.ForeignKey(Gameshow)
+    name = models.CharField(max_length=255, null=True)
 
     @property
     def is_editable(self):
         return datetime.now() < self.gameshow.teams_editable_before
+
+    @property
+    def api_url(self):
+        return '/api/teams/{pk}/'.format(pk=self.pk)
 
 
 class TeamMembership(models.Model):
