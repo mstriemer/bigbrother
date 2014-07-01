@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
-from rest_framework import viewsets
+from rest_framework import permissions, viewsets
 
 from gameshow.models import Contestant, Gameshow, Team, UserPrediction
 from gameshow.forms import TeamForm, TeamFormSet
@@ -188,17 +188,34 @@ def points_detail(request, gameshow_slug):
         context_instance=RequestContext(request))
 
 
-class GameshowViewSet(viewsets.ModelViewSet):
+class IsOwner(permissions.IsAuthenticated):
+    """
+    Custom permission to only allow owners of an object to edit it.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        if super(IsOwner, self).has_object_permission(request, view, obj):
+            # Write permissions are only allowed to the owner of the snippet.
+            return obj.user == request.user
+        else:
+            return False
+
+
+class GameshowViewSet(viewsets.ReadOnlyModelViewSet):
     model = Gameshow
+    permissions_classes = [permissions.IsAuthenticated]
 
 
 class TeamViewSet(viewsets.ModelViewSet):
     model = Team
+    permissions_classes = [IsOwner]
 
 
-class ContestantViewSet(viewsets.ModelViewSet):
+class ContestantViewSet(viewsets.ReadOnlyModelViewSet):
     model = Contestant
+    permissions_classes = [permissions.IsAuthenticated]
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
     model = User
+    permissions_classes = [permissions.IsAuthenticated]
