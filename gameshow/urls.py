@@ -1,18 +1,7 @@
-from django.conf.urls.defaults import patterns, include
-
-from rest_framework import routers
-
-from gameshow import views
-
-router = routers.DefaultRouter()
-router.register('gameshows', views.GameshowViewSet)
-router.register('users', views.UserViewSet)
-router.register('teams', views.TeamViewSet)
-router.register('contestants', views.ContestantViewSet)
+from django.conf.urls.defaults import patterns
 
 urlpatterns = patterns(
     '',
-    (r'^api/', include(router.urls)),
     (r'^$', 'gameshow.views.redirect_to_current'),
     (r'^rules/$', 'gameshow.views.rules'),
     (r'^(?P<gameshow_slug>[a-z0-9-]+)/$', 'gameshow.views.dashboard'),
