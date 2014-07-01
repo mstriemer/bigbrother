@@ -5,18 +5,18 @@ from gameshow.models import Team, TeamMembership, Contestant
 
 
 class TeamForm(forms.ModelForm):
-    team_members = forms.ModelMultipleChoiceField(
-        queryset=Contestant.objects.all())
+    name = forms.CharField(widget=forms.TextInput(
+        attrs={'class': 'team-name-input hide'}))
 
-    def __init__(self, *args, **kwargs):
-        super(TeamForm, self).__init__(*args, **kwargs)
-        self.fields['team_members'].queryset = Contestant.objects.filter(
-                gameshow=self.instance.gameshow, state='active')
+    class Meta:
+        model = Team
+        fields = ['name']
+
 
 class TeamMembershipForm(forms.ModelForm):
     contestant = forms.ModelChoiceField(
-            queryset=Contestant.objects.filter(state='active'),
-            widget=forms.Select(attrs={'class': 'span2'}))
+        queryset=Contestant.objects.filter(state='active'),
+        widget=forms.Select(attrs={'class': 'span2'}))
 
     def __init__(self, *args, **kwargs):
         team = kwargs.pop('team', None)
@@ -49,5 +49,6 @@ def _team_form_set_clean(self):
         raise forms.ValidationError(error_msg)
 
 TeamFormSet = inlineformset_factory(Team, TeamMembership, can_delete=False,
-        extra=4, max_num=4, form=TeamMembershipForm)
+                                    extra=4, max_num=4,
+                                    form=TeamMembershipForm)
 TeamFormSet.clean = _team_form_set_clean

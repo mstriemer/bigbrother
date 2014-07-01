@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets
 
 from gameshow.models import Contestant, Gameshow, Team, UserPrediction
-from gameshow.forms import TeamFormSet
+from gameshow.forms import TeamForm, TeamFormSet
 
 
 def redirect_to_current(request):
@@ -50,7 +50,12 @@ def dashboard(request, gameshow_slug):
     except Gameshow.DoesNotExist:
         return redirect_to_current(request)
     team, created = gameshow.team_set.get_or_create(user=request.user)
-    team_form_set = TeamFormSet(instance=team) if team.is_editable else None
+    if team.is_editable:
+        team_form_set = TeamFormSet(instance=team)
+        team_form = TeamForm(instance=team)
+    else:
+        team_form_set = None
+        team_form = None
     user_points = gameshow.calculate_points().items()
     user_points.sort(key=lambda up: up[1], reverse=True)
     now = datetime.now()
@@ -66,7 +71,7 @@ def dashboard(request, gameshow_slug):
         {'gameshow': gameshow, 'user_points': user_points,
          'upcoming_predictions': upcoming_predictions,
          'past_predictions': past_predictions,
-         'team': team, 'team_form_set': team_form_set},
+         'team': team, 'team_form': team_form, 'team_form_set': team_form_set},
         context_instance=RequestContext(request))
 
 
@@ -98,8 +103,10 @@ def team_detail(request, gameshow_slug):
     team, created = gameshow.team_set.get_or_create(user=request.user)
     if team.is_editable:
         form_set = TeamFormSet(request.POST or None, instance=team)
-        if form_set.is_valid():
+        team_form = TeamForm(request.POST or None, instance=team)
+        if form_set.is_valid() and team_form.is_valid():
             form_set.save()
+            team_form.save()
             messages.success(request, 'Your team was successfully updated')
             return redirect(
                 reverse('gameshow.views.dashboard', args=[gameshow.slug]))

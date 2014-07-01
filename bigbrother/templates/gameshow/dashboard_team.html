@@ -3,21 +3,25 @@
 <div class="well">
     <h4>
         <span class="team-name">
-            {% if team.name %}{{ team.name }}{% else %}Your Alliance{% endif %}
+            {% if team.name %}
+                {{ team.name }}
+            {% else %}
+                Your Alliance
+            {% endif %}
         </span>
         <small>
-            <a href="#" class="set-team-name" data-api-url="{{ team.api_url }}">
+            <a href="#" class="set-team-name">
                 Set name
             </a>
         </small>
     </h4>
-    <div class="change-team-name">
-        <input type="text" name="name" placeholder="Alliance name" data-csrf-token="{{ csrf_token }}" value="{% if team.name %}{{ team.name }}{% endif %}" class="team-name-input">
-    </div>
     {% if team.is_editable and team_form_set %}
     <form action="{% url "gameshow.views.team_detail" gameshow.slug %}" method="post" class="form-inline" id="team-form">
         {% csrf_token %}
         {{ team_form_set.management_form }}
+        <div class="change-team-name">
+            {{ team_form.name|as_bootstrap }}
+        </div>
         {% for form in team_form_set %}
             {{ form|as_bootstrap }}
         {% endfor %}
