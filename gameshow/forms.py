@@ -5,8 +5,9 @@ from gameshow.models import Team, TeamMembership, Contestant
 
 
 class TeamForm(forms.ModelForm):
-    name = forms.CharField(widget=forms.TextInput(
-        attrs={'class': 'team-name-input hide'}))
+    name = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'team-name-input hide'}))
 
     class Meta:
         model = Team
