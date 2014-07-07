@@ -93,10 +93,16 @@ class GameshowAdmin(admin.ModelAdmin):
     inlines = (ContestantInline,)
 
 
+def inactivate_contestants(modeladmin, request, queryset):
+    queryset.update(state='inactive')
+inactivate_contestants.short_description = 'Inactivate selected contestants'
+
+
 class ContestantAdmin(admin.ModelAdmin):
-    list_display = ('name', 'state', 'gameshow')
-    list_filter = ('gameshow',)
-    inlines = (EventContestantInline,)
+    list_display = ['name', 'state', 'gameshow']
+    list_filter = ['gameshow']
+    inlines = [EventContestantInline]
+    actions = [inactivate_contestants]
 
 
 class EventAdmin(admin.ModelAdmin):
