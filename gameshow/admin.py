@@ -94,7 +94,8 @@ class GameshowAdmin(admin.ModelAdmin):
 
 
 class ContestantAdmin(admin.ModelAdmin):
-    list_display = ('name', 'state')
+    list_display = ('name', 'state', 'gameshow')
+    list_filter = ('gameshow',)
     inlines = (EventContestantInline,)
 
 
