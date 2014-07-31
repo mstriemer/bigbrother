@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
 from django.contrib import messages
 from django.core.urlresolvers import reverse
@@ -188,6 +188,15 @@ def points_detail(request, gameshow_slug):
         context_instance=RequestContext(request))
 
 
+@login_required
+def teams(request, gameshow_slug):
+    gameshow = get_object_or_404(Gameshow, slug=gameshow_slug)
+    return render_to_response(
+        'gameshow/teams.html',
+        {'gameshow': gameshow},
+        context_instance=RequestContext(request))
+
+
 class IsOwner(permissions.IsAuthenticated):
     """
     Custom permission to only allow owners of an object to edit it.
@@ -206,9 +215,16 @@ class GameshowViewSet(viewsets.ReadOnlyModelViewSet):
     permissions_classes = [permissions.IsAuthenticated]
 
 
-class TeamViewSet(viewsets.ModelViewSet):
+class TeamViewSet(viewsets.ReadOnlyModelViewSet):
     model = Team
     permissions_classes = [IsOwner]
+
+    def get_queryset(self):
+        queryset = super(TeamViewSet, self).get_queryset()
+        gameshow_id = self.request.QUERY_PARAMS.get('gameshow_id')
+        if gameshow_id:
+            queryset = queryset.filter(gameshow_id=gameshow_id)
+        return queryset
 
 
 class ContestantViewSet(viewsets.ReadOnlyModelViewSet):
