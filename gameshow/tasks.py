@@ -41,15 +41,7 @@ event_schedule = {
         {
             'name': 'Head of Household',
             'description': 'Predict winner',
-            'points': 10,
-            'number_of_choices': 2,
-            'can_match_team': True,
-            'time': time(hour=20, minute=0, second=0),
-        },
-        {
-            'name': 'Final Head of Household',
-            'description': 'Predict winner',
-            'points': 10,
+            'points': 20,
             'number_of_choices': 1,
             'can_match_team': True,
             'time': time(hour=20, minute=0, second=0),
