@@ -8,7 +8,7 @@ from gameshow.models import Gameshow, Event, Contestant, UserPrediction
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['url', 'name', 'username']
+        fields = ['url', 'first_name', 'username']
 
 
 class GameshowSerializer(serializers.HyperlinkedModelSerializer):
@@ -32,5 +32,5 @@ class ContestantSerializer(serializers.HyperlinkedModelSerializer):
 
 class UserPredictionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        models = UserPrediction
+        model = UserPrediction
         fields = ['url', 'event', 'contestant', 'user']
