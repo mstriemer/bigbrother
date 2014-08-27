@@ -6,6 +6,7 @@ from gameshow import views
 
 router = routers.DefaultRouter()
 router.register('gameshows', views.GameshowViewSet)
+router.register('events', views.EventViewSet)
 
 urlpatterns = patterns(
     '',
