@@ -18,7 +18,7 @@ event_schedule = {
             'time': time(hour=19, minute=0, second=0),
         },
     ],
-    'Wednesday': [
+    'Tuesday': [
         {
             'name': 'Power of Veto',
             'description': 'Predict winner',
@@ -28,7 +28,7 @@ event_schedule = {
             'time': time(hour=19, minute=0, second=0),
         },
     ],
-    'Thursday': [
+    'Wednesday': [
         {
             'name': 'Eviction',
             'description': 'Predict evictee',
