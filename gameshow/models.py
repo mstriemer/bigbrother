@@ -1,6 +1,8 @@
 from datetime import datetime, date, time
 from collections import defaultdict
 
+from django.core import urlresolvers
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
@@ -149,6 +151,13 @@ class Prediction(models.Model):
                     userpredictionchoice_set.all())
         except UserPrediction.DoesNotExist:
             return []
+
+    def get_admin_url(self):
+            content_type = ContentType.objects.get_for_model(self.__class__)
+            return urlresolvers.reverse(
+                "admin:%s_%s_change" % (content_type.app_label,
+                                        content_type.model),
+                args=(self.id,))
 
 
 class PredictionMatch(models.Model):

@@ -13,6 +13,9 @@
                     {% else %}
                     {{ user_prediction.total_points|display_points }}
                     {% endif %}
+                    {% if user.is_staff %}
+                    <a href="{{ prediction.get_admin_url }}">Edit</a>
+                    {% endif %}
                 </small>
             </div>
             <div class="span3 prediction-date">{{ prediction.event.date_performed }}</div>

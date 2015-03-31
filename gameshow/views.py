@@ -126,8 +126,41 @@ def rules(request):
 
 
 @login_required
+def graph(request, gameshow_slug):
+    return render_to_response(
+        'gameshow/graphs.html',
+        context_instance=RequestContext(request))
+
+
+@login_required
 def points_detail(request, gameshow_slug):
     gameshow = Gameshow.objects.get(slug=gameshow_slug)
+    everything, user_points = all_user_points(gameshow)
+    the_points = user_points.items()
+    max_points = {}
+    max_points['team'] = max(p['team'] for u, p in the_points)
+    max_points['prediction'] = max(p['prediction'] for u, p in the_points)
+    max_points['total'] = max(p['total'] for u, p in the_points)
+    winners = {}
+    most_points = dict(total=0, team=0, prediction=0)
+    for user, points in the_points:
+        for field in ('team', 'prediction'):
+            if points[field] > most_points[field]:
+                most_points[field] = points[field]
+                winners[field] = user.first_name
+    total_points = [(u, p['total']) for u, p in the_points]
+    total_points.sort(key=lambda t: t[1])
+    winners['first'] = total_points[-1][0].first_name
+    winners['second'] = total_points[-2][0].first_name
+    winners['third'] = total_points[-3][0].first_name
+    return render_to_response(
+        'gameshow/points_detail.html',
+        {'everything': everything, 'totals': user_points,
+         'max_points': max_points, 'winners': winners, 'gameshow': gameshow},
+        context_instance=RequestContext(request))
+
+
+def all_user_points(gameshow):
     predictions = gameshow.prediction_set.order_by(
         'event__date_performed').filter(
             event__date_performed__lte=datetime.today())
@@ -163,29 +196,7 @@ def points_detail(request, gameshow_slug):
             points.update({'new_total_points': user_points[user]['total']})
             prediction_row['users'][user] = points
         everything.append(prediction_row)
-    everything.reverse()
-    the_points = user_points.items()
-    max_points = {}
-    max_points['team'] = max(p['team'] for u, p in the_points)
-    max_points['prediction'] = max(p['prediction'] for u, p in the_points)
-    max_points['total'] = max(p['total'] for u, p in the_points)
-    winners = {}
-    most_points = dict(total=0, team=0, prediction=0)
-    for user, points in the_points:
-        for field in ('team', 'prediction'):
-            if points[field] > most_points[field]:
-                most_points[field] = points[field]
-                winners[field] = user.first_name
-    total_points = [(u, p['total']) for u, p in the_points]
-    total_points.sort(key=lambda t: t[1])
-    winners['first'] = total_points[-1][0].first_name
-    winners['second'] = total_points[-2][0].first_name
-    winners['third'] = total_points[-3][0].first_name
-    return render_to_response(
-        'gameshow/points_detail.html',
-        {'everything': everything, 'totals': user_points,
-         'max_points': max_points, 'winners': winners, 'gameshow': gameshow},
-        context_instance=RequestContext(request))
+    return reversed(everything), user_points
 
 
 @login_required

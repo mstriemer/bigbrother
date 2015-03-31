@@ -23,4 +23,6 @@ urlpatterns = patterns(
     (r'^(?P<gameshow_slug>[a-z0-9-]+)/team/$', 'gameshow.views.team_detail'),
     (r'^(?P<gameshow_slug>[a-z0-9-]+)/points/$',
         'gameshow.views.points_detail'),
+    (r'^(?P<gameshow_slug>[a-z0-9-]+)/graphs/$',
+        'gameshow.views.graph'),
 )
