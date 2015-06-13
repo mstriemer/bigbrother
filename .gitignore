@@ -7,3 +7,9 @@ env-bigbrother
 bigbrother/settings/local.py
 bigbrother/static
 .DS_Store
+node_modules
+env.sh
+bower_components
+db.sqlite3
+tmp
+bigbrother.db
