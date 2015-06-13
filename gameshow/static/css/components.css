@@ -1,0 +1,29 @@
+* {
+    box-sizing: border-box;
+}
+
+create-event {
+    form {
+        align-items: stretch;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    input {
+        font-size: 20px;
+        line-height: 2;
+        margin: 5px 0;
+        padding: 0 10px;
+    }
+    button {
+        font-size: 20px;
+        line-height: 2;
+        background: blue;
+        color: white;
+        border: 0;
+
+        &:active {
+            background: darkblue;
+        }
+    }
+}

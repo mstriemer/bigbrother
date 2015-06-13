@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timedelta
 
 from django.shortcuts import get_object_or_404, render_to_response, redirect
@@ -7,9 +8,9 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
-from rest_framework import permissions, viewsets
+from rest_framework import permissions, serializers, viewsets
 
-from gameshow.models import Contestant, Gameshow, Team, UserPrediction
+from gameshow.models import Contestant, Event, Gameshow, Team, UserPrediction
 from gameshow.forms import TeamForm, TeamFormSet
 
 
@@ -208,6 +209,18 @@ def teams(request, gameshow_slug):
         context_instance=RequestContext(request))
 
 
+@login_required
+def new_event(request, gameshow_slug):
+    gameshow = get_object_or_404(Gameshow, slug=gameshow_slug)
+    return render_to_response('gameshow/new_event.html', {
+        'gameshow': gameshow,
+        'gameshow_data': json.dumps({
+            'pk': gameshow.pk,
+            'name': gameshow.name,
+        }),
+    }, context_instance=RequestContext(request))
+
+
 class IsOwner(permissions.IsAuthenticated):
     """
     Custom permission to only allow owners of an object to edit it.
@@ -223,12 +236,12 @@ class IsOwner(permissions.IsAuthenticated):
 
 class GameshowViewSet(viewsets.ReadOnlyModelViewSet):
     model = Gameshow
-    permissions_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class TeamViewSet(viewsets.ReadOnlyModelViewSet):
     model = Team
-    permissions_classes = [IsOwner]
+    permission_classes = [IsOwner]
 
     def get_queryset(self):
         queryset = super(TeamViewSet, self).get_queryset()
@@ -240,9 +253,29 @@ class TeamViewSet(viewsets.ReadOnlyModelViewSet):
 
 class ContestantViewSet(viewsets.ReadOnlyModelViewSet):
     model = Contestant
-    permissions_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     model = User
-    permissions_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class EventSerializer(serializers.ModelSerializer):
+    contestants = serializers.SerializerMethodField('get_contestants')
+
+    class Meta:
+        fields = ['gameshow', 'name', 'date', 'date_performed', 'contestants', 'id']
+        model = Event
+
+    def get_contestants(self, obj):
+        return obj.gameshow.contestant_set.filter(state='active')
+
+
+class EventViewSet(viewsets.ModelViewSet):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    def create(self, *args, **kwargs):
+        return super(EventViewSet, self).create(*args, **kwargs)
