@@ -26,6 +26,16 @@ $.el = function(tagName, stuff, ...content) {
     }
     return tag;
 };
+$.fetch = function(url, params) {
+    let csrfToken = $.one('meta[name=csrf-token]').content;
+    let csrfHeader = $.one('meta[name=csrf-header]').content;
+    params.credentials = 'include';
+    if (!params.headers) {
+        params.headers = {};
+    }
+    params.headers[csrfHeader] = csrfToken;
+    return fetch(url, params);
+};
 
 let React = {
     createElement() {
@@ -49,36 +59,32 @@ document.registerElement('create-event', class extends HTMLElement {
         </form>;
         $.on(form, 'submit', (e) => {
             e.preventDefault();
-            let csrfToken = $.one('meta[name=csrf-token]').content;
-            let csrfHeader = $.one('meta[name=csrf-header]').content;
-            fetch('/api/events/', {
-                method: 'post',
-                credentials: 'include',
-                headers: {
-                    [csrfHeader]: csrfToken,
-                },
-                body: new FormData(form),
-            }).then((response) => {
-                if (response.status === 201) {
-                    response.json().then((event) => {
-                        this.textContent = event.id;
-                    });
-                } else {
-                    response.json().then((error) => {
-                        this.innerHTML = '';
-                        let errors = Object.keys(error).map((err) => {
-                            return <li>{err + ': ' + error[err]}</li>;
-                        });
-                        this.appendChild(<ul>
-                            {errors}
-                        </ul>);
-                    });
-                }
-            }, (error) => {
-                this.innerHTML = 'error'
-            });
+            this.onSubmit(e);
         });
         this.appendChild(form);
+    }
+    onSubmit(e) {
+        let form = e.target;
+        $.fetch('/api/events/', {
+            method: 'post',
+            body: new FormData(form),
+        }).then((response) => {
+            if (response.status === 201) {
+                response.json().then((event) => {
+                    this.textContent = event.id;
+                });
+            } else {
+                response.json().then((error) => {
+                    this.innerHTML = '';
+                    let errors = Object.keys(error).map((err) => {
+                        return <li>{err + ': ' + error[err]}</li>;
+                    });
+                    this.appendChild(<ul>
+                        {errors}
+                    </ul>);
+                });
+            }
+        });
     }
     get gameshow() {
         return JSON.parse(this.getAttribute('gameshow'));
