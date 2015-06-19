@@ -14,7 +14,6 @@ router.register('contestants', views.ContestantViewSet)
 urlpatterns = patterns(
     '',
     (r'^api/', include(router.urls)),
-    ('r^new/', 'gameshow.views.new'),
     (r'^$', 'gameshow.views.redirect_to_current'),
     (r'^rules/$', 'gameshow.views.rules'),
     (r'^(?P<gameshow_slug>[a-z0-9-]+)/$', 'gameshow.views.dashboard'),
