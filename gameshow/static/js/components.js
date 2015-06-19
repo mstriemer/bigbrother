@@ -54,7 +54,7 @@ document.registerElement('create-event', class extends HTMLElement {
             <input name="gameshow" type="hidden" value={this.gameshow.pk} />
             <input name="name" placeholder="Event name" type="text" required />
             <input name="date" placeholder="Date aired" type="text" required />
-            <input name="date" placeholder="Date aired" type="text" required />
+            <input name="date_performed" placeholder="Date performed" type="text" required />
             <button type="submit">Create</button>
         </form>;
         $.on(form, 'submit', (e) => {

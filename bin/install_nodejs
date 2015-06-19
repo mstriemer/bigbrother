@@ -5,7 +5,7 @@ if [ -e .heroku/python/bin/node ]; then
     exit
 fi
 
-NODE_VERSION=0.8.12
+NODE_VERSION=0.10.33
 NODE_BASENAME=node-v${NODE_VERSION}-linux-x64
 NODE_ARCHIVE="http://nodejs.org/dist/v${NODE_VERSION}/${NODE_BASENAME}.tar.gz"
 

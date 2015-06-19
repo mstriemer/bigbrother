@@ -1,9 +1,11 @@
+import json
+
+import mock
 from django.contrib.auth.models import User
 from django.test import TestCase, RequestFactory
 
-import mock
-
-from gameshow.views import IsOwner
+from gameshow.models import Event
+from gameshow.views import IsOwner, EventViewSet
 
 
 class IsOwnerTestCase(TestCase):
@@ -43,3 +45,21 @@ class IsOwnerTestCase(TestCase):
         self.assertEqual(
             IsOwner().has_object_permission(request, 'myview', obj),
             False)
+
+
+class EventViewSetTestCase(TestCase):
+    fixtures = ['gameshow-basic']
+
+    def create(self, data):
+        return self.client.post('/api/events/', json.dumps(data),
+                                content_type='application/json')
+
+    def test_event_is_created(self):
+        data = {
+            'gameshow': 'bb1',
+            'name': 'Head of Household',
+        }
+        initial = Event.objects.count()
+        response = self.create(data)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(Event.objects.count(), initial + 1)
