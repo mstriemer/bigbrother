@@ -158,9 +158,9 @@ LOGGING = {
 
 # compressor settings
 COMPRESS_PRECOMPILERS = (
-    ('text/coffeescript', 'coffee --compile --stdio'),
-    ('text/less', 'lessc {infile} {outfile}'),
-    ('text/babel', 'babel {infile}'),
+    ('text/coffeescript', 'node_modules/.bin/coffee --compile --stdio'),
+    ('text/less', 'node_modules/.bin/lessc {infile} {outfile}'),
+    ('text/babel', 'node_modules/.bin/babel {infile}'),
 )
 COMPRESS_OFFLINE = not DEBUG
 COMPRESS_ENABLED = COMPRESS_OFFLINE
