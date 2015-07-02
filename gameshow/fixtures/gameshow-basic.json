@@ -1,0 +1,65 @@
+[
+    {
+        "model": "gameshow.gameshow",
+        "pk": 1,
+        "fields": {
+            "name": "Big Brother 1",
+            "slug": "bb1",
+            "teams_editable_before": "2015-12-12T12:00:00"
+        }
+    },
+    {
+        "model": "gameshow.contestant",
+        "pk": 1,
+        "fields": {
+            "gameshow": 1,
+            "name": "Alice",
+            "state": "active"
+        }
+    },
+    {
+        "model": "gameshow.contestant",
+        "pk": 2,
+        "fields": {
+            "gameshow": 1,
+            "name": "Bob",
+            "state": "active"
+        }
+    },
+    {
+        "model": "gameshow.contestant",
+        "pk": 3,
+        "fields": {
+            "gameshow": 1,
+            "name": "Candice",
+            "state": "active"
+        }
+    },
+    {
+        "model": "gameshow.contestant",
+        "pk": 4,
+        "fields": {
+            "gameshow": 1,
+            "name": "Doug",
+            "state": "active"
+        }
+    },
+    {
+        "model": "gameshow.contestant",
+        "pk": 5,
+        "fields": {
+            "gameshow": 1,
+            "name": "Elizabeth",
+            "state": "inactive"
+        }
+    },
+    {
+        "model": "gameshow.contestant",
+        "pk": 6,
+        "fields": {
+            "gameshow": 1,
+            "name": "Frank",
+            "state": "inactive"
+        }
+    }
+]

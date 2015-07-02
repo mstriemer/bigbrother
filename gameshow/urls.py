@@ -6,10 +6,10 @@ from gameshow import views
 
 router = routers.DefaultRouter()
 router.register('events', views.EventViewSet)
-router.register('gameshows', views.GameshowViewSet)
-router.register('users', views.UserViewSet)
-router.register('teams', views.TeamViewSet)
-router.register('contestants', views.ContestantViewSet)
+# router.register('gameshows', views.GameshowViewSet)
+# router.register('users', views.UserViewSet)
+# router.register('teams', views.TeamViewSet)
+# router.register('contestants', views.ContestantViewSet)
 
 urlpatterns = patterns(
     '',

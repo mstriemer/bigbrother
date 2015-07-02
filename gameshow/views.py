@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 
 from rest_framework import permissions, serializers, viewsets
 
-from gameshow.models import Contestant, Event, Gameshow, Team, UserPrediction
+from gameshow.models import Contestant, Event, EventContestant, Gameshow, Team, UserPrediction
 from gameshow.forms import TeamForm, TeamFormSet
 
 
@@ -262,20 +262,20 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class EventSerializer(serializers.ModelSerializer):
-    contestants = serializers.SerializerMethodField('get_contestants')
 
     class Meta:
-        fields = ['gameshow', 'name', 'date', 'date_performed', 'contestants', 'id']
+        fields = ['gameshow', 'name', 'date', 'date_performed', 'contestants',
+                  'id']
         model = Event
 
-    def get_contestants(self, obj):
-        return obj.gameshow.contestant_set.filter(state='active')
+    def create(self, validated_data):
+        event = super(EventSerializer, self).create(validated_data)
+        for contestant in event.gameshow.contestant_set.filter(state='active'):
+            EventContestant.objects.create(event=event, contestant=contestant)
+        return event
 
 
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
     permission_classes = [permissions.IsAdminUser]
-
-    def create(self, *args, **kwargs):
-        return super(EventViewSet, self).create(*args, **kwargs)
