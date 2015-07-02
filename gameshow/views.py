@@ -279,3 +279,10 @@ class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
     permission_classes = [permissions.IsAdminUser]
+
+    def get_queryset(self):
+        gameshow_pk = self.request.query_params.get('gameshow')
+        if gameshow_pk:
+            return self.queryset.filter(gameshow__pk=gameshow_pk)
+        else:
+            return super(EventViewSet, self).get_queryset()

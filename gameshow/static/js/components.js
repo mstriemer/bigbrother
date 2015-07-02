@@ -10,7 +10,9 @@ $.el = function(tagName, stuff, ...content) {
     }
     if (content) {
         content.forEach((el) => {
-            if (el.split) {
+            if (el === undefined) {
+                return;
+            } else if (el.split) {
                 tag.textContent = el;
             } else if (el.forEach) {
                 el.forEach((e) => {
@@ -29,6 +31,7 @@ $.el = function(tagName, stuff, ...content) {
 $.fetch = function(url, params) {
     let csrfToken = $.one('meta[name=csrf-token]').content;
     let csrfHeader = $.one('meta[name=csrf-header]').content;
+    params = params || {};
     params.credentials = 'include';
     if (!params.headers) {
         params.headers = {};
@@ -45,12 +48,17 @@ let React = {
 
 let gameshow = JSON.parse($.one('meta[name=gameshow-data]').content);
 
+document.body.appendChild($.el('h1', {}, gameshow.name));
 document.body.appendChild($.el('create-event', {'gameshow': JSON.stringify(gameshow)}));
+document.body.appendChild($.el('event-list', {'gameshow': JSON.stringify(gameshow)}));
 
 document.registerElement('create-event', class extends HTMLElement {
     createdCallback() {
+        this.showCreateButton();
+    }
+    showCreateForm() {
+        this.cleanup();
         let form = <form>
-            <h1>{this.gameshow.name}</h1>
             <input name="gameshow" type="hidden" value={this.gameshow.pk} />
             <input name="name" placeholder="Event name" type="text" required />
             <input name="date" placeholder="Date aired" type="text" required />
@@ -62,6 +70,23 @@ document.registerElement('create-event', class extends HTMLElement {
             this.onSubmit(e);
         });
         this.appendChild(form);
+        this.querySelector('[name=name]').focus();
+    }
+    showCreateButton() {
+        this.cleanup();
+        let form = <form><button type="submit">Create event</button></form>;
+        this.appendChild(form);
+        $.on(form, 'click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.showCreateForm();
+        });
+    }
+    cleanup() {
+        let form = this.querySelector('form');
+        if (form) {
+            this.removeChild(form);
+        }
     }
     onSubmit(e) {
         let form = e.target;
@@ -71,7 +96,7 @@ document.registerElement('create-event', class extends HTMLElement {
         }).then((response) => {
             if (response.status === 201) {
                 response.json().then((event) => {
-                    this.textContent = event.id;
+                    this.showCreateButton();
                 });
             } else {
                 response.json().then((error) => {
@@ -85,6 +110,33 @@ document.registerElement('create-event', class extends HTMLElement {
                 });
             }
         });
+    }
+    get gameshow() {
+        return JSON.parse(this.getAttribute('gameshow'));
+    }
+});
+document.registerElement('event-list', class extends HTMLElement {
+    createdCallback() {
+        let loadingIndicator = <div class="loading">Loading...</div>;
+        this.appendChild(loadingIndicator);
+        $.fetch(`/api/events/?gameshow=${gameshow.pk}`).then((response) => {
+            if (response.ok) {
+                response.json().then((events) => {
+                    this.removeChild(loadingIndicator);
+                    this.showEvents(events);
+                });
+            } else {
+                console.log('error fetching event list');
+                this.textContent = "Error fetching event list";
+            };
+        });
+    }
+    showEvents(events) {
+        let container = document.createDocumentFragment();
+        events.forEach((event) => {
+            container.appendChild(<div class="event">{`${event.name} - ${event.date_performed}`}</div>);
+        });
+        this.appendChild(container);
     }
     get gameshow() {
         return JSON.parse(this.getAttribute('gameshow'));

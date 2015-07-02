@@ -1,5 +1,11 @@
 * {
     box-sizing: border-box;
+    font-family: "Fira Sans", sans-serif;
+    font-weight: 300;
+}
+
+h1 {
+    text-align: center;
 }
 
 create-event {
@@ -10,20 +16,36 @@ create-event {
         width: 100%;
     }
     input {
+        border: 1px solid #ccc;
         font-size: 20px;
         line-height: 2;
         margin: 5px 0;
         padding: 0 10px;
     }
     button {
+        @background-color: #3333FF;
         font-size: 20px;
         line-height: 2;
-        background: blue;
+        background: @background-color;
         color: white;
         border: 0;
 
-        &:active {
-            background: darkblue;
+        &:hover {
+            background: lighten(@background-color, 10%);
         }
+        &:active {
+            background: darken(@background-color, 15%);
+        }
+    }
+}
+
+event-list {
+    display: block;
+    padding-top: 20px;
+
+    .event {
+        border: 1px solid #ccc;
+        margin: 10px 0;
+        padding: 10px;
     }
 }
