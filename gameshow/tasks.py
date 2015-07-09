@@ -11,24 +11,24 @@ event_schedule = {
     'Sunday': [
         {
             'name': 'Nominations',
-            'description': 'Predict final nominee',
+            'description': 'Predict final nominees',
             'points': 10,
             'number_of_choices': 2,
             'can_match_team': False,
-            'time': time(hour=18, minute=0, second=0),
+            'time': time(hour=20, minute=0, second=0),
         },
     ],
-    'Monday': [
+    'Wednesday': [
         {
             'name': 'Power of Veto',
             'description': 'Predict winner',
             'points': 10,
             'number_of_choices': 1,
             'can_match_team': True,
-            'time': time(hour=19, minute=0, second=0),
+            'time': time(hour=20, minute=0, second=0),
         },
     ],
-    'Wednesday': [
+    'Thursday': [
         {
             'name': 'Eviction',
             'description': 'Predict evictee',
@@ -39,12 +39,20 @@ event_schedule = {
             'day_offset': 7,
         },
         {
-            'name': 'Head of Household',
+            'name': 'Head of Households',
+            'description': 'Predict winners',
+            'points': 10,
+            'number_of_choices': 2,
+            'can_match_team': True,
+            'time': time(hour=20, minute=0, second=1),
+        },
+        {
+            'name': 'Final Head of Household',
             'description': 'Predict winner',
-            'points': 20,
+            'points': 10,
             'number_of_choices': 1,
             'can_match_team': True,
-            'time': time(hour=20, minute=0, second=0),
+            'time': time(hour=20, minute=0, second=2),
         },
     ],
 }
