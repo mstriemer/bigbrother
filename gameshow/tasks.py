@@ -39,7 +39,7 @@ event_schedule = {
             'day_offset': 7,
         },
         {
-            'name': 'Head of Households',
+            'name': 'Heads of Household',
             'description': 'Predict winners',
             'points': 10,
             'number_of_choices': 2,
