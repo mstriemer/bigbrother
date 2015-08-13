@@ -39,20 +39,12 @@ event_schedule = {
             'day_offset': 7,
         },
         {
-            'name': 'Heads of Household',
-            'description': 'Predict winners',
-            'points': 10,
-            'number_of_choices': 2,
-            'can_match_team': True,
-            'time': time(hour=20, minute=0, second=1),
-        },
-        {
-            'name': 'Final Head of Household',
+            'name': 'Head of Household',
             'description': 'Predict winner',
-            'points': 10,
+            'points': 20,
             'number_of_choices': 1,
             'can_match_team': True,
-            'time': time(hour=20, minute=0, second=2),
+            'time': time(hour=20, minute=0, second=1),
         },
     ],
 }
